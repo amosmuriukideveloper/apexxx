@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+<<<<<<< HEAD
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -14,10 +15,19 @@ class Project extends Model
 
     protected $fillable = [
         'project_number',
+=======
+
+class Project extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+>>>>>>> bfba36818be5d4e5756a2b2c814380ee7b3f4fd1
         'title',
         'description',
         'subject',
         'difficulty_level',
+<<<<<<< HEAD
         'project_type',
         'complexity_level',
         'subject_area',
@@ -40,20 +50,31 @@ class Project extends Model
         'assigned_expert_id',
         'expert_id',
         'admin_id',
+=======
+        'deadline',
+        'budget',
+        'status',
+        'student_id',
+        'assigned_expert_id',
+>>>>>>> bfba36818be5d4e5756a2b2c814380ee7b3f4fd1
         'admin_notes',
         'revision_notes',
         'attachments',
         'deliverables',
+<<<<<<< HEAD
         'assigned_at',
         'started_at',
         'submitted_at',
         'completed_at',
+=======
+>>>>>>> bfba36818be5d4e5756a2b2c814380ee7b3f4fd1
     ];
 
     protected $casts = [
         'deadline' => 'datetime',
         'attachments' => 'array',
         'deliverables' => 'array',
+<<<<<<< HEAD
         'requirements' => 'array',
         'budget' => 'decimal:2',
         'cost' => 'decimal:2',
@@ -67,6 +88,9 @@ class Project extends Model
         'started_at' => 'datetime',
         'submitted_at' => 'datetime',
         'completed_at' => 'datetime',
+=======
+        'budget' => 'decimal:2',
+>>>>>>> bfba36818be5d4e5756a2b2c814380ee7b3f4fd1
     ];
 
     public function student(): BelongsTo
@@ -79,6 +103,7 @@ class Project extends Model
         return $this->belongsTo(User::class, 'assigned_expert_id');
     }
 
+<<<<<<< HEAD
     public function expert(): BelongsTo
     {
         return $this->belongsTo(Expert::class, 'expert_id');
@@ -99,6 +124,8 @@ class Project extends Model
         return $this->hasMany(ProjectSubmission::class);
     }
 
+=======
+>>>>>>> bfba36818be5d4e5756a2b2c814380ee7b3f4fd1
     public function getStatusColorAttribute(): string
     {
         return match($this->status) {

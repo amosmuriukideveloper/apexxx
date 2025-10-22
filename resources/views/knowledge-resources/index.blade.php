@@ -73,6 +73,7 @@
                 <p class="text-gray-600 max-w-2xl mx-auto">Hand-picked by our experts to help you excel in your studies</p>
             </div>
             
+<<<<<<< HEAD
             <!-- Courses Section -->
             <div class="mb-16">
                 <div class="flex items-center justify-between mb-8">
@@ -211,6 +212,54 @@
                     </div>
                     @endforelse
                 </div>
+=======
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Sample Resource Cards -->
+                @for($i = 1; $i <= 6; $i++)
+                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
+                    <div class="relative">
+                        <div class="h-48 bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
+                            <i data-lucide="file-text" class="h-16 w-16 text-white"></i>
+                        </div>
+                        <div class="absolute top-4 right-4">
+                            <span class="bg-white/90 text-blue-600 px-2 py-1 rounded-full text-xs font-semibold">Premium</span>
+                        </div>
+                        <div class="absolute bottom-4 left-4">
+                            <span class="bg-black/50 text-white px-2 py-1 rounded text-xs">PDF • 2.5 MB</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">Mathematics</span>
+                            <div class="flex items-center gap-1">
+                                @for($j = 1; $j <= 5; $j++)
+                                    <i data-lucide="star" class="h-3 w-3 {{ $j <= 4 ? 'text-yellow-400 fill-current' : 'text-gray-300' }}"></i>
+                                @endfor
+                                <span class="text-xs text-gray-600 ml-1">(4.8)</span>
+                            </div>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                            Advanced Calculus Study Guide {{ $i }}
+                        </h3>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">
+                            Comprehensive guide covering differential and integral calculus with practical examples and exercises.
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face" alt="Expert" class="w-6 h-6 rounded-full">
+                                <span class="text-sm text-gray-600">Dr. Smith</span>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-lg font-bold text-gray-900">${{ 19.99 }}</div>
+                                <button class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endfor
+>>>>>>> bfba36818be5d4e5756a2b2c814380ee7b3f4fd1
             </div>
         </div>
     </section>
@@ -289,6 +338,7 @@
     </section>
 </div>
 
+<<<<<<< HEAD
 <!-- Login Prompt Modal -->
 <div id="loginModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-2xl p-8 max-w-md mx-4 animate-fade-in">
@@ -308,10 +358,13 @@
     </div>
 </div>
 
+=======
+>>>>>>> bfba36818be5d4e5756a2b2c814380ee7b3f4fd1
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     lucide.createIcons();
 });
+<<<<<<< HEAD
 
 function showLoginPrompt() {
     document.getElementById('loginModal').classList.remove('hidden');
@@ -320,5 +373,7 @@ function showLoginPrompt() {
 function hideLoginPrompt() {
     document.getElementById('loginModal').classList.add('hidden');
 }
+=======
+>>>>>>> bfba36818be5d4e5756a2b2c814380ee7b3f4fd1
 </script>
 @endsection

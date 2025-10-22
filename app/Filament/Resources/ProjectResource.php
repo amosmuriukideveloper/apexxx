@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProjectResource\Pages;
+<<<<<<< HEAD
 use App\Filament\Resources\ProjectResource\Schemas\ProjectFormSchema;
 use App\Filament\Resources\ProjectResource\Schemas\ProjectInfolistSchema;
 use App\Filament\Resources\ProjectResource\Tables\ProjectTable;
@@ -11,6 +12,17 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
+=======
+use App\Models\Project;
+use App\Models\User;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
+>>>>>>> bfba36818be5d4e5756a2b2c814380ee7b3f4fd1
 
 class ProjectResource extends Resource
 {
@@ -22,6 +34,7 @@ class ProjectResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
+<<<<<<< HEAD
     public static function form(Form $form): Form
     {
         return $form->schema(ProjectFormSchema::getSchema());
@@ -73,6 +86,40 @@ class ProjectResource extends Resource
         return 'warning';
     }
 }
+=======
+    public static function getNavigationBadge(): ?string
+    {
+        $user = Auth::user();
+        
+        if ($user->isStudent()) {
+            return (string) $user->projects()->count();
+        } elseif ($user->isExpert()) {
+            return (string) $user->assignedProjects()->count();
+        } elseif ($user->isAnyAdmin()) {
+            return (string) static::getModel()::count();
+        }
+        
+        return null;
+    }
+
+    public static function canViewAny(): bool
+    {
+        return Auth::user()->can('view_projects');
+    }
+
+    public static function form(Form $form): Form
+    {
+        $user = Auth::user();
+        
+        return $form
+            ->schema([
+                Forms\Components\Section::make('Project Information')
+                    ->schema([
+                        Forms\Components\TextInput::make('title')
+                            ->required()
+                            ->maxLength(255)
+                            ->columnSpan(2),
+>>>>>>> bfba36818be5d4e5756a2b2c814380ee7b3f4fd1
                         
                         Forms\Components\Textarea::make('description')
                             ->required()

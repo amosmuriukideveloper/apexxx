@@ -5,8 +5,11 @@ namespace App\Filament\Resources\ProjectResource\Pages;
 use App\Filament\Resources\ProjectResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
+<<<<<<< HEAD
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
+=======
+>>>>>>> bfba36818be5d4e5756a2b2c814380ee7b3f4fd1
 use Illuminate\Support\Facades\Auth;
 
 class ViewProject extends ViewRecord
@@ -16,6 +19,7 @@ class ViewProject extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+<<<<<<< HEAD
             Actions\EditAction::make(),
             Actions\DeleteAction::make(),
         ];
@@ -108,4 +112,10 @@ class ViewProject extends ViewRecord
                     ->columnSpanFull(),
             ]);
     }
+=======
+            Actions\EditAction::make()
+                ->visible(fn () => Auth::user()->can('edit_projects')),
+        ];
+    }
+>>>>>>> bfba36818be5d4e5756a2b2c814380ee7b3f4fd1
 }
