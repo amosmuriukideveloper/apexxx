@@ -2,17 +2,14 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\GeneralSetting;
+use App\Settings\GeneralSettings;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
-use Filament\Notifications\Notification;
 
 class ManageGeneralSettings extends SettingsPage
 {
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
-
-    protected static string $view = 'filament.pages.manage-general-settings';
 
     protected static ?string $navigationGroup = 'Settings';
 
@@ -22,46 +19,7 @@ class ManageGeneralSettings extends SettingsPage
 
     protected static ?string $navigationLabel = 'General Settings';
 
-    public ?array $data = [];
-
-    public function mount(): void
-    {
-        $this->form->fill([
-            'site_name' => GeneralSetting::get('site_name', 'Academic Platform'),
-            'site_tagline' => GeneralSetting::get('site_tagline', 'Learn, Create, Succeed'),
-            'site_description' => GeneralSetting::get('site_description'),
-            'site_logo' => GeneralSetting::get('site_logo'),
-            'site_favicon' => GeneralSetting::get('site_favicon'),
-            'default_language' => GeneralSetting::get('default_language', 'en'),
-            'currency_code' => GeneralSetting::get('currency_code', 'USD'),
-            'currency_symbol' => GeneralSetting::get('currency_symbol', '$'),
-            'currency_position' => GeneralSetting::get('currency_position', 'before'),
-            'contact_email' => GeneralSetting::get('contact_email'),
-            'contact_phone' => GeneralSetting::get('contact_phone'),
-            'support_email' => GeneralSetting::get('support_email'),
-            'address' => GeneralSetting::get('address'),
-            'timezone' => GeneralSetting::get('timezone', 'UTC'),
-            'date_format' => GeneralSetting::get('date_format', 'Y-m-d'),
-            'time_format' => GeneralSetting::get('time_format', 'H:i:s'),
-            'maintenance_mode' => GeneralSetting::get('maintenance_mode', false),
-            'maintenance_message' => GeneralSetting::get('maintenance_message'),
-            'registration_enabled_student' => GeneralSetting::get('registration_enabled_student', true),
-            'registration_enabled_expert' => GeneralSetting::get('registration_enabled_expert', true),
-            'registration_enabled_tutor' => GeneralSetting::get('registration_enabled_tutor', true),
-            'registration_enabled_creator' => GeneralSetting::get('registration_enabled_creator', true),
-            'email_verification_required' => GeneralSetting::get('email_verification_required', true),
-            'sms_verification_required' => GeneralSetting::get('sms_verification_required', false),
-            'course_platform_enabled' => GeneralSetting::get('course_platform_enabled', true),
-            'tutoring_system_enabled' => GeneralSetting::get('tutoring_system_enabled', true),
-            'multilanguage_support' => GeneralSetting::get('multilanguage_support', false),
-            'terms_url' => GeneralSetting::get('terms_url'),
-            'privacy_url' => GeneralSetting::get('privacy_url'),
-            'facebook_url' => GeneralSetting::get('facebook_url'),
-            'twitter_url' => GeneralSetting::get('twitter_url'),
-            'linkedin_url' => GeneralSetting::get('linkedin_url'),
-            'instagram_url' => GeneralSetting::get('instagram_url'),
-        ]);
-    }
+    protected static string $settings = GeneralSettings::class;
 
     public function form(Form $form): Form
     {
@@ -304,25 +262,10 @@ class ManageGeneralSettings extends SettingsPage
                             ->maxLength(255)
                             ->prefix('https://'),
                     ])->columns(2),
-            ])
-            ->statePath('data');
+            ]);
     }
 
-    public function save(): void
-    {
-        $data = $this->form->getState();
-
-        foreach ($data as $key => $value) {
-            GeneralSetting::set($key, $value, 'text', 'general');
-        }
-
-        Notification::make()
-            ->title('Settings saved successfully')
-            ->success()
-            ->send();
-    }
-
-    protected function getFormActions(): array
+    public function getFormActions(): array
     {
         return [
             Forms\Components\Actions\Action::make('save')

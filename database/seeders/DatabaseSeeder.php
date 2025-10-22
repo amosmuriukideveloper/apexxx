@@ -18,7 +18,8 @@ class DatabaseSeeder extends Seeder
         // Seed roles and permissions first
         $this->call(RoleAndPermissionSeeder::class);
 
-        // User::factory(10)->create();
+        // Seed subjects before other content
+        $this->call(SubjectSeeder::class);
 
         // Create a super admin user
         $superAdmin = User::factory()->create([
@@ -57,5 +58,20 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@example.com',
         ]);
         $admin->assignRole('admin');
+
+        // Create additional users for testing
+        User::factory(20)->create()->each(function ($user) {
+            $roles = ['student', 'expert', 'tutor', 'content_creator'];
+            $user->assignRole(fake()->randomElement($roles));
+        });
+
+        // Seed content and transactions
+        $this->call([
+            ProjectSeeder::class,
+            CourseSeeder::class,
+            TutoringSeeder::class,
+            StudyResourceSeeder::class,
+            WalletSeeder::class,
+        ]);
     }
 }

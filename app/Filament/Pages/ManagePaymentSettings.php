@@ -2,17 +2,14 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\PaymentSetting;
+use App\Settings\PaymentSettings;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Pages\Page;
-use Filament\Notifications\Notification;
+use Filament\Pages\SettingsPage;
 
-class ManagePaymentSettings extends Page
+class ManagePaymentSettings extends SettingsPage
 {
     protected static ?string $navigationIcon = 'heroicon-o-credit-card';
-
-    protected static string $view = 'filament.pages.manage-payment-settings';
 
     protected static ?string $navigationGroup = 'Settings';
 
@@ -22,50 +19,7 @@ class ManagePaymentSettings extends Page
 
     protected static ?string $navigationLabel = 'Payment Settings';
 
-    public ?array $data = [];
-
-    public function mount(): void
-    {
-        $mpesa = PaymentSetting::where('provider', 'mpesa')->first();
-        $paypal = PaymentSetting::where('provider', 'paypal')->first();
-        $pesapal = PaymentSetting::where('provider', 'pesapal')->first();
-        $general = PaymentSetting::where('provider', 'general')->first();
-
-        $this->form->fill([
-            // M-Pesa
-            'mpesa_active' => $mpesa?->is_active ?? false,
-            'mpesa_environment' => $mpesa?->credentials['environment'] ?? 'sandbox',
-            'mpesa_consumer_key' => $mpesa?->credentials['consumer_key'] ?? '',
-            'mpesa_consumer_secret' => $mpesa?->credentials['consumer_secret'] ?? '',
-            'mpesa_shortcode' => $mpesa?->credentials['shortcode'] ?? '',
-            'mpesa_passkey' => $mpesa?->credentials['passkey'] ?? '',
-            'mpesa_callback_url' => $mpesa?->credentials['callback_url'] ?? url('/api/mpesa/callback'),
-            'mpesa_timeout' => $mpesa?->credentials['timeout'] ?? 30,
-
-            // PayPal
-            'paypal_active' => $paypal?->is_active ?? false,
-            'paypal_environment' => $paypal?->credentials['environment'] ?? 'sandbox',
-            'paypal_client_id' => $paypal?->credentials['client_id'] ?? '',
-            'paypal_client_secret' => $paypal?->credentials['client_secret'] ?? '',
-            'paypal_webhook_id' => $paypal?->credentials['webhook_id'] ?? '',
-            'paypal_currencies' => $paypal?->credentials['currencies'] ?? ['USD', 'EUR', 'GBP'],
-            'paypal_return_url' => $paypal?->credentials['return_url'] ?? url('/payment/success'),
-            'paypal_cancel_url' => $paypal?->credentials['cancel_url'] ?? url('/payment/cancel'),
-
-            // PesaPal
-            'pesapal_active' => $pesapal?->is_active ?? false,
-            'pesapal_demo_mode' => $pesapal?->is_test_mode ?? true,
-            'pesapal_consumer_key' => $pesapal?->credentials['consumer_key'] ?? '',
-            'pesapal_consumer_secret' => $pesapal?->credentials['consumer_secret'] ?? '',
-            'pesapal_ipn_url' => $pesapal?->credentials['ipn_url'] ?? url('/api/pesapal/ipn'),
-            'pesapal_card_types' => $pesapal?->credentials['card_types'] ?? ['VISA', 'MASTERCARD'],
-
-            // General Settings
-            'commission_rate' => $general?->commission_rate ?? 20.00,
-            'minimum_payout' => $general?->minimum_payout ?? 10.00,
-            'payout_schedule' => $general?->payout_schedule ?? 'weekly',
-        ]);
-    }
+    protected static string $settings = PaymentSettings::class;
 
     public function form(Form $form): Form
     {
@@ -286,83 +240,10 @@ class ManagePaymentSettings extends Page
                             ->required()
                             ->helperText('How often payouts are processed'),
                     ])->columns(3),
-            ])
-            ->statePath('data');
+            ]);
     }
 
-    public function save(): void
-    {
-        $data = $this->form->getState();
-
-        // Save M-Pesa settings with encryption for sensitive fields
-        PaymentSetting::updateOrCreate(
-            ['provider' => 'mpesa'],
-            [
-                'is_active' => $data['mpesa_active'],
-                'is_test_mode' => $data['mpesa_environment'] === 'sandbox',
-                'credentials' => [
-                    'environment' => $data['mpesa_environment'],
-                    'consumer_key' => encrypt($data['mpesa_consumer_key'] ?? ''),
-                    'consumer_secret' => encrypt($data['mpesa_consumer_secret'] ?? ''),
-                    'shortcode' => $data['mpesa_shortcode'],
-                    'passkey' => encrypt($data['mpesa_passkey'] ?? ''),
-                    'callback_url' => $data['mpesa_callback_url'],
-                    'timeout' => $data['mpesa_timeout'] ?? 30,
-                ],
-            ]
-        );
-
-        // Save PayPal settings with encryption
-        PaymentSetting::updateOrCreate(
-            ['provider' => 'paypal'],
-            [
-                'is_active' => $data['paypal_active'],
-                'is_test_mode' => $data['paypal_environment'] === 'sandbox',
-                'credentials' => [
-                    'environment' => $data['paypal_environment'],
-                    'client_id' => $data['paypal_client_id'],
-                    'client_secret' => encrypt($data['paypal_client_secret'] ?? ''),
-                    'webhook_id' => $data['paypal_webhook_id'],
-                    'currencies' => $data['paypal_currencies'] ?? [],
-                    'return_url' => $data['paypal_return_url'],
-                    'cancel_url' => $data['paypal_cancel_url'],
-                ],
-            ]
-        );
-
-        // Save PesaPal settings with encryption
-        PaymentSetting::updateOrCreate(
-            ['provider' => 'pesapal'],
-            [
-                'is_active' => $data['pesapal_active'],
-                'is_test_mode' => $data['pesapal_demo_mode'],
-                'credentials' => [
-                    'consumer_key' => $data['pesapal_consumer_key'],
-                    'consumer_secret' => encrypt($data['pesapal_consumer_secret'] ?? ''),
-                    'ipn_url' => $data['pesapal_ipn_url'],
-                    'card_types' => $data['pesapal_card_types'] ?? [],
-                ],
-            ]
-        );
-
-        // Save general settings
-        PaymentSetting::updateOrCreate(
-            ['provider' => 'general'],
-            [
-                'commission_rate' => $data['commission_rate'],
-                'minimum_payout' => $data['minimum_payout'],
-                'payout_schedule' => $data['payout_schedule'],
-            ]
-        );
-
-        Notification::make()
-            ->title('Payment settings saved successfully')
-            ->body('All payment gateway configurations have been updated securely.')
-            ->success()
-            ->send();
-    }
-
-    protected function getFormActions(): array
+    public function getFormActions(): array
     {
         return [
             Forms\Components\Actions\Action::make('save')

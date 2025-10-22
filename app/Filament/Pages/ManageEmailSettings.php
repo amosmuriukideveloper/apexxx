@@ -2,17 +2,14 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\EmailSetting;
+use App\Settings\EmailSettings;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Pages\Page;
-use Filament\Notifications\Notification;
+use Filament\Pages\SettingsPage;
 
-class ManageEmailSettings extends Page
+class ManageEmailSettings extends SettingsPage
 {
     protected static ?string $navigationIcon = 'heroicon-o-envelope';
-
-    protected static string $view = 'filament.pages.manage-email-settings';
 
     protected static ?string $navigationGroup = 'Settings';
 
@@ -22,24 +19,8 @@ class ManageEmailSettings extends Page
 
     protected static ?string $navigationLabel = 'Email Settings';
 
-    public ?array $data = [];
+    protected static string $settings = EmailSettings::class;
 
-    public function mount(): void
-    {
-        $settings = EmailSetting::first();
-
-        $this->form->fill([
-            'driver' => $settings?->driver ?? 'smtp',
-            'host' => $settings?->host ?? 'smtp.gmail.com',
-            'port' => $settings?->port ?? 587,
-            'username' => $settings?->username ?? '',
-            'password' => $settings?->password ?? '',
-            'encryption' => $settings?->encryption ?? 'tls',
-            'from_address' => $settings?->from_address ?? '',
-            'from_name' => $settings?->from_name ?? 'Academic Platform',
-            'is_active' => $settings?->is_active ?? true,
-        ]);
-    }
 
     public function form(Form $form): Form
     {
@@ -163,36 +144,11 @@ class ManageEmailSettings extends Page
                                 }),
                         ]),
                     ]),
-            ])
-            ->statePath('data');
+            ]);
     }
 
-    public function save(): void
-    {
-        $data = $this->form->getState();
 
-        EmailSetting::updateOrCreate(
-            ['id' => 1],
-            [
-                'driver' => $data['driver'],
-                'host' => $data['host'],
-                'port' => $data['port'],
-                'username' => $data['username'],
-                'password' => $data['password'],
-                'encryption' => $data['encryption'],
-                'from_address' => $data['from_address'],
-                'from_name' => $data['from_name'],
-                'is_active' => $data['is_active'],
-            ]
-        );
-
-        Notification::make()
-            ->title('Email settings saved successfully')
-            ->success()
-            ->send();
-    }
-
-    protected function getFormActions(): array
+    public function getFormActions(): array
     {
         return [
             Forms\Components\Actions\Action::make('save')

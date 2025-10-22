@@ -2,17 +2,14 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\NotificationSetting;
+use App\Settings\NotificationSettings;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Pages\Page;
-use Filament\Notifications\Notification;
+use Filament\Pages\SettingsPage;
 
-class ManageNotificationSettings extends Page
+class ManageNotificationSettings extends SettingsPage
 {
     protected static ?string $navigationIcon = 'heroicon-o-bell';
-
-    protected static string $view = 'filament.pages.manage-notification-settings';
 
     protected static ?string $navigationGroup = 'Settings';
 
@@ -22,51 +19,8 @@ class ManageNotificationSettings extends Page
 
     protected static ?string $navigationLabel = 'Notification Settings';
 
-    public ?array $data = [];
+    protected static string $settings = NotificationSettings::class;
 
-    public function mount(): void
-    {
-        $settings = [
-            // Application notifications
-            'application_submitted_email' => NotificationSetting::where('event_type', 'application_submitted')->where('channel', 'email')->first()?->is_enabled ?? true,
-            'application_submitted_database' => NotificationSetting::where('event_type', 'application_submitted')->where('channel', 'database')->first()?->is_enabled ?? true,
-            
-            'application_approved_email' => NotificationSetting::where('event_type', 'application_approved')->where('channel', 'email')->first()?->is_enabled ?? true,
-            'application_approved_database' => NotificationSetting::where('event_type', 'application_approved')->where('channel', 'database')->first()?->is_enabled ?? true,
-            
-            'application_rejected_email' => NotificationSetting::where('event_type', 'application_rejected')->where('channel', 'email')->first()?->is_enabled ?? true,
-            'application_rejected_database' => NotificationSetting::where('event_type', 'application_rejected')->where('channel', 'database')->first()?->is_enabled ?? true,
-            
-            // Project notifications
-            'project_assigned_email' => NotificationSetting::where('event_type', 'project_assigned')->where('channel', 'email')->first()?->is_enabled ?? true,
-            'project_assigned_database' => NotificationSetting::where('event_type', 'project_assigned')->where('channel', 'database')->first()?->is_enabled ?? true,
-            
-            'project_submitted_email' => NotificationSetting::where('event_type', 'project_submitted')->where('channel', 'email')->first()?->is_enabled ?? true,
-            'project_submitted_database' => NotificationSetting::where('event_type', 'project_submitted')->where('channel', 'database')->first()?->is_enabled ?? true,
-            
-            'project_completed_email' => NotificationSetting::where('event_type', 'project_completed')->where('channel', 'email')->first()?->is_enabled ?? true,
-            'project_completed_database' => NotificationSetting::where('event_type', 'project_completed')->where('channel', 'database')->first()?->is_enabled ?? true,
-            
-            // Tutoring notifications
-            'session_scheduled_email' => NotificationSetting::where('event_type', 'session_scheduled')->where('channel', 'email')->first()?->is_enabled ?? true,
-            'session_scheduled_database' => NotificationSetting::where('event_type', 'session_scheduled')->where('channel', 'database')->first()?->is_enabled ?? true,
-            
-            'session_reminder_email' => NotificationSetting::where('event_type', 'session_reminder')->where('channel', 'email')->first()?->is_enabled ?? true,
-            'session_reminder_database' => NotificationSetting::where('event_type', 'session_reminder')->where('channel', 'database')->first()?->is_enabled ?? true,
-            
-            // Payment notifications
-            'payment_received_email' => NotificationSetting::where('event_type', 'payment_received')->where('channel', 'email')->first()?->is_enabled ?? true,
-            'payment_received_database' => NotificationSetting::where('event_type', 'payment_received')->where('channel', 'database')->first()?->is_enabled ?? true,
-            
-            'payout_requested_email' => NotificationSetting::where('event_type', 'payout_requested')->where('channel', 'email')->first()?->is_enabled ?? true,
-            'payout_requested_database' => NotificationSetting::where('event_type', 'payout_requested')->where('channel', 'database')->first()?->is_enabled ?? true,
-            
-            'payout_approved_email' => NotificationSetting::where('event_type', 'payout_approved')->where('channel', 'email')->first()?->is_enabled ?? true,
-            'payout_approved_database' => NotificationSetting::where('event_type', 'payout_approved')->where('channel', 'database')->first()?->is_enabled ?? true,
-        ];
-
-        $this->form->fill($settings);
-    }
 
     public function form(Form $form): Form
     {
@@ -187,59 +141,11 @@ class ManageNotificationSettings extends Page
                                     ]),
                             ]),
                     ])->collapsible(),
-            ])
-            ->statePath('data');
+            ]);
     }
 
-    public function save(): void
-    {
-        $data = $this->form->getState();
 
-        $eventTypes = [
-            'application_submitted',
-            'application_approved',
-            'application_rejected',
-            'project_assigned',
-            'project_submitted',
-            'project_completed',
-            'session_scheduled',
-            'session_reminder',
-            'payment_received',
-            'payout_requested',
-            'payout_approved',
-        ];
-
-        foreach ($eventTypes as $eventType) {
-            // Email notifications
-            NotificationSetting::updateOrCreate(
-                [
-                    'event_type' => $eventType,
-                    'channel' => 'email',
-                ],
-                [
-                    'is_enabled' => $data["{$eventType}_email"] ?? false,
-                ]
-            );
-
-            // Database/In-App notifications
-            NotificationSetting::updateOrCreate(
-                [
-                    'event_type' => $eventType,
-                    'channel' => 'database',
-                ],
-                [
-                    'is_enabled' => $data["{$eventType}_database"] ?? false,
-                ]
-            );
-        }
-
-        Notification::make()
-            ->title('Notification settings saved successfully')
-            ->success()
-            ->send();
-    }
-
-    protected function getFormActions(): array
+    public function getFormActions(): array
     {
         return [
             Forms\Components\Actions\Action::make('save')

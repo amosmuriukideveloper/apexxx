@@ -95,6 +95,7 @@ class ProjectFormSchema
                             $cost = $get('cost') ?? 0;
                             $commission = $get('platform_commission') ?? 0;
                             $expertEarnings = $get('expert_earnings') ?? 0;
+                            $commissionRate = $get('commission_rate') ?? 20;
                             
                             return "
                                 <div class='space-y-2'>
@@ -104,7 +105,7 @@ class ProjectFormSchema
                                     </div>
                                     <div class='text-sm text-gray-500 space-y-1'>
                                         <div class='flex justify-between'>
-                                            <span>Platform Fee ({$get('commission_rate') ?? 20}%):</span>
+                                            <span>Platform Fee (" . number_format($commissionRate, 2) . "%):</span>
                                             <span>$" . number_format($commission, 2) . "</span>
                                         </div>
                                         <div class='flex justify-between'>

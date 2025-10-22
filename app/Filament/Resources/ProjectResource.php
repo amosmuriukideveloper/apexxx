@@ -3,16 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProjectResource\Pages;
-<<<<<<< HEAD
-use App\Filament\Resources\ProjectResource\Schemas\ProjectFormSchema;
 use App\Filament\Resources\ProjectResource\Schemas\ProjectInfolistSchema;
 use App\Filament\Resources\ProjectResource\Tables\ProjectTable;
-use App\Models\Project;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Tables\Table;
-use Filament\Infolists\Infolist;
-=======
 use App\Models\Project;
 use App\Models\User;
 use Filament\Forms;
@@ -20,9 +12,9 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Infolists\Infolist;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
->>>>>>> bfba36818be5d4e5756a2b2c814380ee7b3f4fd1
 
 class ProjectResource extends Resource
 {
@@ -34,179 +26,103 @@ class ProjectResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-<<<<<<< HEAD
-    public static function form(Form $form): Form
-    {
-        return $form->schema(ProjectFormSchema::getSchema());
-    }
-
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns(ProjectTable::getColumns())
-            ->filters(ProjectTable::getFilters())
-            ->actions(ProjectTable::getActions())
-            ->bulkActions(ProjectTable::getBulkActions())
-            ->defaultSort('created_at', 'desc');
-    }
-
-    public static function infolist(Infolist $infolist): Infolist
-    {
-        return $infolist->schema(ProjectInfolistSchema::getSchema());
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListProjects::route('/'),
-            'create' => Pages\CreateProject::route('/create'),
-            'view' => Pages\ViewProject::route('/{record}'),
-            'edit' => Pages\EditProject::route('/{record}/edit'),
-            'submit' => Pages\SubmitProject::route('/{record}/submit'),
-            'review-submission' => Pages\ReviewSubmission::route('/{record}/review-submission'),
-        ];
-    }
-
-    public static function getNavigationBadge(): ?string
-    {
-        $underReview = static::getModel()::where('status', 'under_review')->count();
-        $awaiting = static::getModel()::where('status', 'awaiting_assignment')->count();
-        return $underReview + $awaiting;
-    }
-
-    public static function getNavigationBadgeColor(): ?string
-    {
-        return 'warning';
-    }
-}
-=======
-    public static function getNavigationBadge(): ?string
-    {
-        $user = Auth::user();
-        
-        if ($user->isStudent()) {
-            return (string) $user->projects()->count();
-        } elseif ($user->isExpert()) {
-            return (string) $user->assignedProjects()->count();
-        } elseif ($user->isAnyAdmin()) {
-            return (string) static::getModel()::count();
-        }
-        
-        return null;
-    }
-
-    public static function canViewAny(): bool
-    {
-        return Auth::user()->can('view_projects');
-    }
-
     public static function form(Form $form): Form
     {
         $user = Auth::user();
-        
-        return $form
-            ->schema([
-                Forms\Components\Section::make('Project Information')
-                    ->schema([
-                        Forms\Components\TextInput::make('title')
-                            ->required()
-                            ->maxLength(255)
-                            ->columnSpan(2),
->>>>>>> bfba36818be5d4e5756a2b2c814380ee7b3f4fd1
-                        
-                        Forms\Components\Textarea::make('description')
-                            ->required()
-                            ->rows(4)
-                            ->columnSpan(2),
-                        
-                        Forms\Components\Select::make('subject')
-                            ->options([
-                                'mathematics' => 'Mathematics',
-                                'physics' => 'Physics',
-                                'chemistry' => 'Chemistry',
-                                'biology' => 'Biology',
-                                'computer_science' => 'Computer Science',
-                                'engineering' => 'Engineering',
-                                'business' => 'Business',
-                                'economics' => 'Economics',
-                                'literature' => 'Literature',
-                                'history' => 'History',
-                            ])
-                            ->required()
-                            ->searchable(),
-                        
-                        Forms\Components\Select::make('difficulty_level')
-                            ->options([
-                                'beginner' => 'Beginner',
-                                'intermediate' => 'Intermediate',
-                                'advanced' => 'Advanced',
-                                'expert' => 'Expert',
-                            ])
-                            ->required(),
-                        
-                        Forms\Components\DateTimePicker::make('deadline')
-                            ->required()
-                            ->minDate(now())
-                            ->disabled(fn () => !$user->can('edit_projects')),
-                        
-                        Forms\Components\TextInput::make('budget')
-                            ->numeric()
-                            ->prefix('$')
-                            ->visible(fn () => $user->isStudent() || $user->isAnyAdmin()),
-                    ])
-                    ->columns(2),
 
-                Forms\Components\Section::make('Assignment & Status')
-                    ->schema([
-                        Forms\Components\Select::make('assigned_expert_id')
-                            ->label('Assigned Expert')
-                            ->relationship('assignedExpert', 'name')
-                            ->options(User::role('expert')->pluck('name', 'id'))
-                            ->searchable()
-                            ->visible(fn () => $user->can('assign_projects')),
-                        
-                        Forms\Components\Select::make('status')
-                            ->options([
-                                'pending' => 'Pending',
-                                'assigned' => 'Assigned',
-                                'in_progress' => 'In Progress',
-                                'review' => 'Under Review',
-                                'revision_requested' => 'Revision Requested',
-                                'completed' => 'Completed',
-                                'cancelled' => 'Cancelled',
-                            ])
-                            ->default('pending')
-                            ->disabled(fn () => $user->isStudent()),
-                        
-                        Forms\Components\Textarea::make('admin_notes')
-                            ->label('Admin Notes')
-                            ->visible(fn () => $user->isAnyAdmin())
-                            ->rows(3),
-                    ])
-                    ->visible(fn () => !$user->isStudent())
-                    ->columns(2),
+        return $form->schema([
+            Forms\Components\Section::make('Project Details')
+                ->schema([
+                    Forms\Components\TextInput::make('title')
+                        ->required()
+                        ->maxLength(255),
+                    
+                    Forms\Components\Textarea::make('description')
+                        ->required()
+                        ->rows(4)
+                        ->columnSpan(2),
+                    
+                    Forms\Components\Select::make('subject')
+                        ->options([
+                            'mathematics' => 'Mathematics',
+                            'physics' => 'Physics',
+                            'chemistry' => 'Chemistry',
+                            'biology' => 'Biology',
+                            'computer_science' => 'Computer Science',
+                            'engineering' => 'Engineering',
+                            'business' => 'Business',
+                            'economics' => 'Economics',
+                            'literature' => 'Literature',
+                            'history' => 'History',
+                        ])
+                        ->required()
+                        ->searchable(),
+                    
+                    Forms\Components\Select::make('difficulty_level')
+                        ->options([
+                            'beginner' => 'Beginner',
+                            'intermediate' => 'Intermediate',
+                            'advanced' => 'Advanced',
+                            'expert' => 'Expert',
+                        ])
+                        ->required(),
+                    
+                    Forms\Components\DateTimePicker::make('deadline')
+                        ->required()
+                        ->minDate(now())
+                        ->disabled(fn () => !$user->can('edit_projects')),
+                    
+                    Forms\Components\TextInput::make('budget')
+                        ->numeric()
+                        ->prefix('$')
+                        ->visible(fn () => $user->isStudent() || $user->isAnyAdmin()),
+                ])
+                ->columns(2),
 
-                Forms\Components\Section::make('Files & Deliverables')
-                    ->schema([
-                        Forms\Components\FileUpload::make('attachments')
-                            ->multiple()
-                            ->directory('project-attachments')
-                            ->visible(fn () => $user->can('upload_deliverables')),
-                        
-                        Forms\Components\FileUpload::make('deliverables')
-                            ->multiple()
-                            ->directory('project-deliverables')
-                            ->visible(fn () => $user->isExpert() || $user->isAnyAdmin()),
-                    ])
-                    ->columns(1),
-            ]);
+            Forms\Components\Section::make('Assignment & Status')
+                ->schema([
+                    Forms\Components\Select::make('assigned_expert_id')
+                        ->label('Assigned Expert')
+                        ->relationship('assignedExpert', 'name')
+                        ->options(User::role('expert')->pluck('name', 'id'))
+                        ->searchable()
+                        ->visible(fn () => $user->can('assign_projects')),
+                    
+                    Forms\Components\Select::make('status')
+                        ->options([
+                            'pending' => 'Pending',
+                            'assigned' => 'Assigned',
+                            'in_progress' => 'In Progress',
+                            'review' => 'Under Review',
+                            'revision_requested' => 'Revision Requested',
+                            'completed' => 'Completed',
+                            'cancelled' => 'Cancelled',
+                        ])
+                        ->default('pending')
+                        ->disabled(fn () => $user->isStudent()),
+                    
+                    Forms\Components\Textarea::make('admin_notes')
+                        ->label('Admin Notes')
+                        ->visible(fn () => $user->isAnyAdmin())
+                        ->rows(3),
+                ])
+                ->visible(fn () => !$user->isStudent())
+                ->columns(2),
+
+            Forms\Components\Section::make('Files & Deliverables')
+                ->schema([
+                    Forms\Components\FileUpload::make('attachments')
+                        ->multiple()
+                        ->directory('project-attachments')
+                        ->visible(fn () => $user->can('upload_deliverables')),
+                    
+                    Forms\Components\FileUpload::make('deliverables')
+                        ->multiple()
+                        ->directory('project-deliverables')
+                        ->visible(fn () => $user->isExpert() || $user->isAnyAdmin()),
+                ])
+                ->columns(1),
+        ]);
     }
 
     public static function table(Table $table): Table
@@ -372,6 +288,11 @@ class ProjectResource extends Resource
             ]);
     }
 
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist->schema(ProjectInfolistSchema::getSchema());
+    }
+
     public static function getRelations(): array
     {
         return [
@@ -386,6 +307,20 @@ class ProjectResource extends Resource
             'create' => Pages\CreateProject::route('/create'),
             'view' => Pages\ViewProject::route('/{record}'),
             'edit' => Pages\EditProject::route('/{record}/edit'),
+            'submit' => Pages\SubmitProject::route('/{record}/submit'),
+            'review-submission' => Pages\ReviewSubmission::route('/{record}/review-submission'),
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        $underReview = static::getModel()::where('status', 'under_review')->count();
+        $awaiting = static::getModel()::where('status', 'awaiting_assignment')->count();
+        return $underReview + $awaiting;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'warning';
     }
 }
