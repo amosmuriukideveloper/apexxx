@@ -16,7 +16,7 @@ return new class extends Migration
             $table->enum('payout_method', ['bank_transfer', 'mpesa', 'paypal']);
             $table->json('account_details'); // Bank details, phone, email
             $table->enum('status', ['pending', 'approved', 'processing', 'completed', 'rejected'])->default('pending');
-            $table->foreignId('batch_id')->nullable()->constrained('payout_batches');
+            $table->unsignedBigInteger('batch_id')->nullable();
             $table->text('rejection_reason')->nullable();
             $table->timestamp('requested_at')->useCurrent();
             $table->foreignId('processed_by')->nullable()->constrained('users');

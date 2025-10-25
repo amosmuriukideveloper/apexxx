@@ -87,8 +87,73 @@ Route::prefix('services')->name('services.')->group(function () {
 Route::prefix('knowledge-resources')->name('knowledge-resources.')->group(function () {
     Route::get('/', function () {
         // Mock data for demonstration
-        $courses = collect([]);
-        $resources = collect([]);
+        $courses = collect([
+            (object) [
+                'id' => 1,
+                'title' => 'Advanced Mathematics Course',
+                'short_description' => 'Master advanced mathematical concepts with expert guidance.',
+                'thumbnail_path' => null,
+                'level' => 'advanced',
+                'category' => 'mathematics',
+                'is_featured' => true,
+                'price' => 99.99,
+                'discount_price' => null,
+                'average_rating' => 4.8,
+                'total_reviews' => 124,
+                'total_enrollments' => 456,
+                'creator' => (object) [
+                    'user' => (object) ['name' => 'Dr. Sarah Johnson']
+                ]
+            ],
+            (object) [
+                'id' => 2,
+                'title' => 'Physics Fundamentals',
+                'short_description' => 'Learn the core principles of physics through interactive lessons.',
+                'thumbnail_path' => null,
+                'level' => 'beginner',
+                'category' => 'physics',
+                'is_featured' => false,
+                'price' => 79.99,
+                'discount_price' => 59.99,
+                'average_rating' => 4.6,
+                'total_reviews' => 89,
+                'total_enrollments' => 234,
+                'creator' => (object) [
+                    'user' => (object) ['name' => 'Prof. Michael Chen']
+                ]
+            ]
+        ]);
+        
+        $studyResources = collect([
+            (object) [
+                'id' => 1,
+                'title' => 'Chemistry Lab Manual',
+                'thumbnail_path' => null,
+                'resource_type' => 'pdf',
+                'download_count' => 156,
+                'is_free' => false,
+                'price' => 19.99
+            ],
+            (object) [
+                'id' => 2,
+                'title' => 'Statistics Cheat Sheet',
+                'thumbnail_path' => null,
+                'resource_type' => 'pdf',
+                'download_count' => 89,
+                'is_free' => true,
+                'price' => 0
+            ],
+            (object) [
+                'id' => 3,
+                'title' => 'Biology Study Guide',
+                'thumbnail_path' => null,
+                'resource_type' => 'doc',
+                'download_count' => 234,
+                'is_free' => false,
+                'price' => 15.99
+            ]
+        ]);
+        
         $subjects = collect([]);
         $types = [
             'video' => 'Video',
@@ -97,7 +162,7 @@ Route::prefix('knowledge-resources')->name('knowledge-resources.')->group(functi
             'audio' => 'Audio'
         ];
         
-        return view('knowledge-resources.index', compact('courses', 'resources', 'subjects', 'types'));
+        return view('knowledge-resources.index', compact('courses', 'studyResources', 'subjects', 'types'));
     })->name('index');
     
     Route::get('/{resource}', function ($resource) {
@@ -137,19 +202,60 @@ Route::get('/courses', function () {
     return view('courses.index');
 })->name('courses.index');
 
-// Auth Routes (placeholder - these would be handled by Laravel Breeze/Jetstream)
-Route::get('/login', function () {
-    return redirect('/');
-})->name('login');
+// Auth Routes
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 
-Route::get('/register', function () {
-    return redirect('/');
-})->name('register');
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::post('/logout', function () {
-    return redirect('/');
-})->name('logout');
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register']);
 
+// Role-specific registration routes
+Route::get('/register/student', [RegisterController::class, 'showStudentRegistration'])->name('register.student');
+Route::post('/register/student', [RegisterController::class, 'registerStudent']);
+
+Route::get('/register/expert', [RegisterController::class, 'showExpertRegistration'])->name('register.expert');
+Route::post('/register/expert', [RegisterController::class, 'registerExpert']);
+
+Route::get('/register/tutor', [RegisterController::class, 'showTutorRegistration'])->name('register.tutor');
+Route::post('/register/tutor', [RegisterController::class, 'registerTutor']);
+
+Route::get('/register/creator', [RegisterController::class, 'showCreatorRegistration'])->name('register.creator');
+Route::post('/register/creator', [RegisterController::class, 'registerCreator']);
+
+// Dashboard route - will redirect based on role
 Route::get('/dashboard', function () {
-    return redirect('/');
+    if (!auth()->check()) {
+        return redirect()->route('login');
+    }
+    
+    $user = auth()->user();
+    
+    if ($user->hasRole('super_admin') || $user->hasRole('admin')) {
+        return redirect('/admin/dashboard');
+    }
+    
+    if ($user->hasRole('student')) {
+        return redirect('/student/dashboard');
+    }
+    
+    if ($user->hasRole('expert')) {
+        return redirect('/expert/dashboard');
+    }
+    
+    if ($user->hasRole('tutor')) {
+        return redirect('/tutor/dashboard');
+    }
+    
+    if ($user->hasRole('content_creator')) {
+        return redirect('/creator/dashboard');
+    }
+    
+    return view('dashboard');
 })->name('dashboard');
+
+// Include role-protected routes
+require __DIR__.'/role-protected.php';

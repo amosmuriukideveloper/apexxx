@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
-    use AuthenticatesUsers;
 
     /**
      * Where to redirect users after login.
@@ -63,26 +62,39 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        $this->validateLogin($request);
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-        if (method_exists($this, 'hasTooManyLoginAttempts') &&
-            $this->hasTooManyLoginAttempts($request)) {
-            $this->fireLockoutEvent($request);
+        $credentials = $request->only('email', 'password');
+        $remember = $request->filled('remember');
 
-            return $this->sendLockoutResponse($request);
+        if (Auth::attempt($credentials, $remember)) {
+            $request->session()->regenerate();
+            
+            return redirect()->intended($this->redirectTo());
         }
 
-        if ($this->attemptLogin($request)) {
-            if ($request->hasSession()) {
-                $request->session()->put('auth.password_confirmed_at', time());
-            }
+        throw ValidationException::withMessages([
+            'email' => ['The provided credentials are incorrect.'],
+        ]);
+    }
 
-            return $this->sendLoginResponse($request);
-        }
+    /**
+     * Get the guard to be used during authentication.
+     */
+    protected function guard()
+    {
+        return Auth::guard();
+    }
 
-        $this->incrementLoginAttempts($request);
-
-        return $this->sendFailedLoginResponse($request);
+    /**
+     * The user has been logged out of the application.
+     */
+    protected function loggedOut(Request $request)
+    {
+        //
     }
 
     /**

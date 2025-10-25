@@ -17,7 +17,7 @@ return new class extends Migration
             $table->timestamp('last_accessed_at')->nullable();
             $table->timestamp('completed_at')->nullable();
             $table->boolean('certificate_issued')->default(false);
-            $table->foreignId('certificate_id')->nullable()->constrained('course_certificates');
+            $table->unsignedBigInteger('certificate_id')->nullable();
             $table->enum('payment_status', ['pending', 'paid', 'refunded'])->default('pending');
             $table->decimal('amount_paid', 10, 2)->default(0);
             $table->timestamps();

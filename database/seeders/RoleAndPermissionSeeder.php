@@ -17,6 +17,15 @@ class RoleAndPermissionSeeder extends Seeder
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
+        // Clear existing permissions and roles to avoid conflicts
+        \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        \DB::table('model_has_permissions')->truncate();
+        \DB::table('model_has_roles')->truncate();
+        \DB::table('role_has_permissions')->truncate();
+        Permission::truncate();
+        Role::truncate();
+        \DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
         // Create permissions for Projects
         $projectPermissions = [
             'create_projects',
@@ -158,13 +167,16 @@ class RoleAndPermissionSeeder extends Seeder
 
         // Create permissions
         foreach ($allPermissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
         }
+
+        // Clear cache to ensure permissions are available
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Create roles and assign permissions
 
         // 1. Student Role
-        $studentRole = Role::create(['name' => 'student']);
+        $studentRole = Role::firstOrCreate(['name' => 'student', 'guard_name' => 'web']);
         $studentRole->givePermissionTo([
             'create_projects',
             'view_projects',
@@ -187,7 +199,7 @@ class RoleAndPermissionSeeder extends Seeder
         ]);
 
         // 2. Expert Role
-        $expertRole = Role::create(['name' => 'expert']);
+        $expertRole = Role::firstOrCreate(['name' => 'expert', 'guard_name' => 'web']);
         $expertRole->givePermissionTo([
             'view_projects',
             'edit_projects',
@@ -205,7 +217,7 @@ class RoleAndPermissionSeeder extends Seeder
         ]);
 
         // 3. Tutor Role
-        $tutorRole = Role::create(['name' => 'tutor']);
+        $tutorRole = Role::firstOrCreate(['name' => 'tutor', 'guard_name' => 'web']);
         $tutorRole->givePermissionTo([
             'view_tutoring_sessions',
             'edit_tutoring_sessions',
@@ -224,7 +236,7 @@ class RoleAndPermissionSeeder extends Seeder
         ]);
 
         // 4. Content Creator Role
-        $contentCreatorRole = Role::create(['name' => 'content_creator']);
+        $contentCreatorRole = Role::firstOrCreate(['name' => 'content_creator', 'guard_name' => 'web']);
         $contentCreatorRole->givePermissionTo([
             'create_courses',
             'view_courses',
@@ -243,7 +255,7 @@ class RoleAndPermissionSeeder extends Seeder
         ]);
 
         // 5. Admin Role
-        $adminRole = Role::create(['name' => 'admin']);
+        $adminRole = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
         $adminRole->givePermissionTo([
             'view_projects',
             'edit_projects',
@@ -280,7 +292,7 @@ class RoleAndPermissionSeeder extends Seeder
         ]);
 
         // 6. Super Admin Role
-        $superAdminRole = Role::create(['name' => 'super_admin']);
+        $superAdminRole = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
         $superAdminRole->givePermissionTo(Permission::all());
 
         $this->command->info('Roles and permissions have been seeded successfully!');

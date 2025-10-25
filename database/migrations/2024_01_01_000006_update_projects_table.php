@@ -38,7 +38,7 @@ return new class extends Migration
                 $table->integer('page_count')->nullable()->after('word_count');
             }
             if (!Schema::hasColumn('projects', 'platform_commission')) {
-                $table->decimal('platform_commission', 10, 2)->default(0)->after('cost');
+                $table->decimal('platform_commission', 10, 2)->default(0)->after('budget');
             }
             if (!Schema::hasColumn('projects', 'expert_earnings')) {
                 $table->decimal('expert_earnings', 10, 2)->default(0)->after('platform_commission');
