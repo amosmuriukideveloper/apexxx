@@ -17,6 +17,8 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Events\Auth\Registered;
+use Illuminate\Support\Facades\Event;
 
 class StudentPanelProvider extends PanelProvider
 {
@@ -26,6 +28,7 @@ class StudentPanelProvider extends PanelProvider
             ->id('student')
             ->path('student')
             ->login()
+            ->registration()
             ->brandName('Student Dashboard')
             ->brandLogo(asset('images/logo.png'))
             ->favicon(asset('favicon.ico'))
@@ -45,22 +48,10 @@ class StudentPanelProvider extends PanelProvider
                 Widgets\AccountWidget::class,
             ])
             ->navigationGroups([
-                'Projects' => [
-                    'icon' => 'heroicon-o-briefcase',
-                    'sort' => 1,
-                ],
-                'Learning' => [
-                    'icon' => 'heroicon-o-academic-cap',
-                    'sort' => 2,
-                ],
-                'Payments' => [
-                    'icon' => 'heroicon-o-credit-card',
-                    'sort' => 3,
-                ],
-                'Profile' => [
-                    'icon' => 'heroicon-o-user',
-                    'sort' => 4,
-                ],
+                'Projects',
+                'Learning',
+                'Payments',
+                'Profile',
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -77,5 +68,14 @@ class StudentPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->authGuard('web');
+    }
+
+    public function boot(): void
+    {
+        Event::listen(Registered::class, function (Registered $event) {
+            if ($event->getUser() && !$event->getUser()->hasAnyRole(['student', 'expert', 'tutor', 'content_creator', 'admin', 'super_admin'])) {
+                $event->getUser()->assignRole('student');
+            }
+        });
     }
 }

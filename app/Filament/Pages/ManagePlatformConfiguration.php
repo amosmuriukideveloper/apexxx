@@ -7,6 +7,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Notifications\Notification;
+use Filament\Actions\Action;
 
 class ManagePlatformConfiguration extends Page
 {
@@ -241,9 +242,9 @@ class ManagePlatformConfiguration extends Page
     protected function getFormActions(): array
     {
         return [
-            Forms\Components\Actions\Action::make('save')
+            Action::make('save')
                 ->label('Save Configuration')
-                ->submit('save'),
+                ->action('save'),
         ];
     }
 }

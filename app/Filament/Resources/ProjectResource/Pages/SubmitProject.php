@@ -180,7 +180,6 @@ class SubmitProject extends Page
                                 ->accepted(),
                         ]),
                 ])
-                    ->submitAction(view('filament.pages.actions.wizard-submit'))
                     ->columnSpanFull(),
             ])
             ->statePath('data');

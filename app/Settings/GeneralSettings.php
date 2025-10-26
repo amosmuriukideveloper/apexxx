@@ -14,21 +14,21 @@ class GeneralSettings extends Settings
     public ?string $site_favicon;
 
     // Contact Information
-    public string $contact_email;
+    public ?string $contact_email;
     public ?string $contact_phone;
     public ?string $support_email;
     public ?string $address;
 
     // Localization
-    public string $default_language;
-    public string $timezone;
-    public string $date_format;
-    public string $time_format;
+    public ?string $default_language;
+    public ?string $timezone;
+    public ?string $date_format;
+    public ?string $time_format;
 
     // Currency Settings
-    public string $currency_code;
-    public string $currency_symbol;
-    public string $currency_position;
+    public ?string $currency_code;
+    public ?string $currency_symbol;
+    public ?string $currency_position;
 
     // Feature Toggles
     public bool $maintenance_mode;
@@ -66,9 +66,9 @@ class GeneralSettings extends Settings
             'site_description' => null,
             'site_logo' => null,
             'site_favicon' => null,
-            'contact_email' => '',
+            'contact_email' => 'info@apexscholars.com',
             'contact_phone' => null,
-            'support_email' => null,
+            'support_email' => 'support@apexscholars.com',
             'address' => null,
             'default_language' => 'en',
             'timezone' => 'UTC',

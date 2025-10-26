@@ -40,6 +40,31 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'expert' => [
+            'driver' => 'session',
+            'provider' => 'experts',
+        ],
+
+        'tutor' => [
+            'driver' => 'session',
+            'provider' => 'tutors',
+        ],
+
+        'content_creator' => [
+            'driver' => 'session',
+            'provider' => 'content_creators',
+        ],
+
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
+
+        'super_admin' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
     ],
 
     /*
@@ -65,10 +90,20 @@ return [
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'experts' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Expert::class,
+        ],
+
+        'tutors' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Tutor::class,
+        ],
+
+        'content_creators' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\ContentCreator::class,
+        ],
     ],
 
     /*

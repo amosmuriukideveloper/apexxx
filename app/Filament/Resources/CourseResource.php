@@ -327,7 +327,9 @@ class CourseResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\SectionsRelationManager::class,
+            RelationManagers\LecturesRelationManager::class,
+            RelationManagers\EnrollmentsRelationManager::class,
         ];
     }
 
@@ -338,6 +340,7 @@ class CourseResource extends Resource
             'create' => Pages\CreateCourse::route('/create'),
             'view' => Pages\ViewCourse::route('/{record}'),
             'edit' => Pages\EditCourse::route('/{record}/edit'),
+            'review' => Pages\ReviewCourse::route('/{record}/review'),
         ];
     }
 }

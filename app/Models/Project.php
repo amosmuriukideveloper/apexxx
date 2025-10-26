@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-<<<<<<< HEAD
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -13,84 +12,82 @@ class Project extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($project) {
+            if (empty($project->project_number)) {
+                $project->project_number = 'PRJ-' . strtoupper(uniqid());
+            }
+        });
+    }
+
     protected $fillable = [
         'project_number',
-=======
-
-class Project extends Model
-{
-    use HasFactory;
-
-    protected $fillable = [
->>>>>>> bfba36818be5d4e5756a2b2c814380ee7b3f4fd1
         'title',
         'description',
+        'subject_id',
         'subject',
-        'difficulty_level',
-<<<<<<< HEAD
+        'subject_area',
         'project_type',
         'complexity_level',
-        'subject_area',
-        'requirements',
         'word_count',
         'page_count',
+        'special_instructions',
         'deadline',
-        'budget',
-        'cost',
-        'platform_commission',
+        'original_deadline',
+        'urgency_hours',
+        'urgency_multiplier',
+        'base_price',
+        'urgency_fee',
+        'complexity_fee',
+        'total_price',
         'expert_earnings',
+        'platform_fee',
         'status',
-        'payment_status',
-        'quality_score',
+        'student_id',
+        'expert_id',
+        'assigned_by',
         'turnitin_score',
         'ai_detection_score',
+        'revision_count',
         'student_rating',
         'student_review',
-        'student_id',
-        'assigned_expert_id',
-        'expert_id',
-        'admin_id',
-=======
-        'deadline',
-        'budget',
-        'status',
-        'student_id',
-        'assigned_expert_id',
->>>>>>> bfba36818be5d4e5756a2b2c814380ee7b3f4fd1
-        'admin_notes',
-        'revision_notes',
-        'attachments',
-        'deliverables',
-<<<<<<< HEAD
+        'reference_files',
+        'deliverable_files',
+        'turnitin_report',
+        'ai_report',
+        'paid_at',
         'assigned_at',
+        'accepted_at',
         'started_at',
         'submitted_at',
+        'reviewed_at',
+        'delivered_at',
         'completed_at',
-=======
->>>>>>> bfba36818be5d4e5756a2b2c814380ee7b3f4fd1
     ];
 
     protected $casts = [
         'deadline' => 'datetime',
-        'attachments' => 'array',
-        'deliverables' => 'array',
-<<<<<<< HEAD
-        'requirements' => 'array',
-        'budget' => 'decimal:2',
-        'cost' => 'decimal:2',
-        'platform_commission' => 'decimal:2',
+        'original_deadline' => 'datetime',
+        'reference_files' => 'array',
+        'deliverable_files' => 'array',
+        'base_price' => 'decimal:2',
+        'urgency_fee' => 'decimal:2',
+        'complexity_fee' => 'decimal:2',
+        'total_price' => 'decimal:2',
         'expert_earnings' => 'decimal:2',
-        'quality_score' => 'decimal:2',
-        'turnitin_score' => 'decimal:2',
-        'ai_detection_score' => 'decimal:2',
-        'student_rating' => 'decimal:2',
+        'platform_fee' => 'decimal:2',
+        'urgency_multiplier' => 'decimal:2',
+        'paid_at' => 'datetime',
         'assigned_at' => 'datetime',
+        'accepted_at' => 'datetime',
         'started_at' => 'datetime',
         'submitted_at' => 'datetime',
+        'reviewed_at' => 'datetime',
+        'delivered_at' => 'datetime',
         'completed_at' => 'datetime',
-=======
-        'budget' => 'decimal:2',
->>>>>>> bfba36818be5d4e5756a2b2c814380ee7b3f4fd1
     ];
 
     public function student(): BelongsTo
@@ -103,10 +100,39 @@ class Project extends Model
         return $this->belongsTo(User::class, 'assigned_expert_id');
     }
 
-<<<<<<< HEAD
     public function expert(): BelongsTo
     {
-        return $this->belongsTo(Expert::class, 'expert_id');
+        return $this->belongsTo(User::class, 'expert_id');
+    }
+
+    public function subject(): BelongsTo
+    {
+        return $this->belongsTo(Subject::class);
+    }
+
+    public function assignedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_by');
+    }
+
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(ProjectTransaction::class);
+    }
+
+    public function progressNotes(): HasMany
+    {
+        return $this->hasMany(ProjectProgressNote::class);
+    }
+
+    public function timeLogs(): HasMany
+    {
+        return $this->hasMany(ProjectTimeLog::class);
+    }
+
+    public function declinations(): HasMany
+    {
+        return $this->hasMany(ExpertDeclination::class);
     }
 
     public function admin(): BelongsTo
@@ -124,8 +150,21 @@ class Project extends Model
         return $this->hasMany(ProjectSubmission::class);
     }
 
-=======
->>>>>>> bfba36818be5d4e5756a2b2c814380ee7b3f4fd1
+    public function revisions(): HasMany
+    {
+        return $this->hasMany(ProjectRevision::class);
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(ProjectMessage::class);
+    }
+
+    public function statusHistory(): HasMany
+    {
+        return $this->hasMany(ProjectStatusHistory::class);
+    }
+
     public function getStatusColorAttribute(): string
     {
         return match($this->status) {
@@ -169,5 +208,151 @@ class Project extends Model
     public function canRequestRevision(): bool
     {
         return in_array($this->status, ['review', 'completed']);
+    }
+
+    public function assignToExpert($expertId, $assignedBy)
+    {
+        $this->update([
+            'expert_id' => $expertId,
+            'assigned_by' => $assignedBy,
+            'assigned_at' => now(),
+            'status' => 'assigned',
+        ]);
+    }
+
+    public function acceptByExpert()
+    {
+        $this->update([
+            'accepted_at' => now(),
+            'status' => 'in_progress',
+            'started_at' => now(),
+        ]);
+    }
+
+    public function declineByExpert($expertId, $reason, $category)
+    {
+        $this->declinations()->create([
+            'expert_id' => $expertId,
+            'reason' => $reason,
+            'reason_category' => $category,
+        ]);
+
+        $this->update([
+            'status' => 'awaiting_assignment',
+            'expert_id' => null,
+            'assigned_by' => null,
+            'assigned_at' => null,
+        ]);
+    }
+
+    public function submitWork($files, $turnitinReport, $aiReport, $notes)
+    {
+        $this->submissions()->create([
+            'expert_id' => $this->expert_id,
+            'version' => $this->submissions()->count() + 1,
+            'type' => $this->submissions()->count() > 0 ? 'revision' : 'initial',
+            'files' => $files,
+            'turnitin_report' => $turnitinReport,
+            'ai_report' => $aiReport,
+            'submission_notes' => $notes,
+            'status' => 'submitted',
+        ]);
+
+        $this->update([
+            'submitted_at' => now(),
+            'status' => 'under_review',
+        ]);
+    }
+
+    public function approveSubmission($reviewedBy)
+    {
+        $latestSubmission = $this->submissions()->latest()->first();
+        $latestSubmission->update([
+            'status' => 'approved',
+            'reviewed_by' => $reviewedBy,
+            'reviewed_at' => now(),
+        ]);
+
+        $this->update([
+            'status' => 'approved',
+            'reviewed_at' => now(),
+        ]);
+    }
+
+    public function deliverToStudent()
+    {
+        $this->update([
+            'status' => 'delivered',
+            'delivered_at' => now(),
+        ]);
+    }
+
+    public function completeProject()
+    {
+        $this->update([
+            'status' => 'completed',
+            'completed_at' => now(),
+        ]);
+    }
+
+    public function requestRevision($requestedBy, $requesterType, $notes, $specificChanges = null)
+    {
+        $latestSubmission = $this->submissions()->latest()->first();
+        
+        $this->revisions()->create([
+            'submission_id' => $latestSubmission->id,
+            'requested_by' => $requestedBy,
+            'requester_type' => $requesterType,
+            'revision_notes' => $notes,
+            'specific_changes' => $specificChanges,
+            'status' => 'pending',
+        ]);
+
+        $this->update([
+            'status' => 'revision_required',
+            'revision_count' => $this->revision_count + 1,
+        ]);
+    }
+
+    public function calculatePricing()
+    {
+        // Base price calculation (example: $10 per page or $0.05 per word)
+        $basePrice = $this->page_count ? ($this->page_count * 10) : ($this->word_count * 0.05);
+
+        // Complexity fee
+        $complexityMultiplier = match($this->complexity_level) {
+            'basic' => 1.0,
+            'intermediate' => 1.3,
+            'advanced' => 1.6,
+            'expert' => 2.0,
+            default => 1.0,
+        };
+
+        $complexityFee = $basePrice * ($complexityMultiplier - 1);
+
+        // Urgency fee based on hours until deadline
+        if ($this->urgency_hours <= 24) {
+            $this->urgency_multiplier = 2.0;
+        } elseif ($this->urgency_hours <= 48) {
+            $this->urgency_multiplier = 1.5;
+        } elseif ($this->urgency_hours <= 72) {
+            $this->urgency_multiplier = 1.3;
+        } else {
+            $this->urgency_multiplier = 1.0;
+        }
+
+        $urgencyFee = $basePrice * ($this->urgency_multiplier - 1);
+
+        // Calculate totals
+        $this->base_price = $basePrice;
+        $this->complexity_fee = $complexityFee;
+        $this->urgency_fee = $urgencyFee;
+        $this->total_price = $basePrice + $complexityFee + $urgencyFee;
+
+        // Platform takes 30%, expert gets 70%
+        $this->platform_fee = $this->total_price * 0.30;
+        $this->expert_earnings = $this->total_price * 0.70;
+
+        $this->save();
     }
 }

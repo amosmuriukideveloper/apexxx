@@ -26,6 +26,7 @@ class ExpertPanelProvider extends PanelProvider
             ->id('expert')
             ->path('expert')
             ->login()
+            ->registration()
             ->brandName('Expert Panel')
             ->brandLogo(asset('images/logo.png'))
             ->favicon(asset('favicon.ico'))
@@ -45,22 +46,10 @@ class ExpertPanelProvider extends PanelProvider
                 Widgets\AccountWidget::class,
             ])
             ->navigationGroups([
-                'My Projects' => [
-                    'icon' => 'heroicon-o-briefcase',
-                    'sort' => 1,
-                ],
-                'Submissions' => [
-                    'icon' => 'heroicon-o-document-text',
-                    'sort' => 2,
-                ],
-                'Earnings' => [
-                    'icon' => 'heroicon-o-banknotes',
-                    'sort' => 3,
-                ],
-                'Profile' => [
-                    'icon' => 'heroicon-o-user',
-                    'sort' => 4,
-                ],
+                'My Projects',
+                'Submissions',
+                'Earnings',
+                'Profile',
             ])
             ->middleware([
                 EncryptCookies::class,

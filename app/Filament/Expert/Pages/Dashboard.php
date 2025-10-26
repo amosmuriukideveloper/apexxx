@@ -12,11 +12,7 @@ class Dashboard extends BaseDashboard
 
     public function getWidgets(): array
     {
-        return [
-            \App\Filament\Expert\Widgets\ExpertStatsOverview::class,
-            \App\Filament\Expert\Widgets\AssignedProjects::class,
-            \App\Filament\Expert\Widgets\EarningsChart::class,
-        ];
+        return [];
     }
 
     public function getColumns(): int | string | array

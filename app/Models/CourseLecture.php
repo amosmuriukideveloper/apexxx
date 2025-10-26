@@ -13,20 +13,20 @@ class CourseLecture extends Model
         'section_id',
         'title',
         'description',
-        'lecture_type',
-        'video_url',
-        'video_duration_minutes',
-        'article_content',
-        'pdf_path',
-        'order',
+        'type',
+        'content',
+        'video_path',
+        'video_duration',
         'is_preview',
-        'is_published',
+        'sort_order',
+        'attachments',
     ];
 
     protected $casts = [
-        'video_duration_minutes' => 'integer',
+        'video_duration' => 'integer',
         'is_preview' => 'boolean',
-        'is_published' => 'boolean',
+        'sort_order' => 'integer',
+        'attachments' => 'array',
     ];
 
     public function section()

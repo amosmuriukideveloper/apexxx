@@ -202,31 +202,25 @@ Route::get('/courses', function () {
     return view('courses.index');
 })->name('courses.index');
 
-// Auth Routes
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
+// Auth Routes - Redirect to appropriate Filament panels
+Route::get('/login', function () {
+    // Show a simple login selector page or redirect to student login
+    return view('auth.login-selector');
+})->name('login');
 
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/register', function () {
+    // Show a simple registration selector page  
+    return view('auth.register-selector');
+})->name('register');
 
-Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [RegisterController::class, 'register']);
+Route::post('/logout', function () {
+    auth()->logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect('/');
+})->name('logout');
 
-// Role-specific registration routes
-Route::get('/register/student', [RegisterController::class, 'showStudentRegistration'])->name('register.student');
-Route::post('/register/student', [RegisterController::class, 'registerStudent']);
-
-Route::get('/register/expert', [RegisterController::class, 'showExpertRegistration'])->name('register.expert');
-Route::post('/register/expert', [RegisterController::class, 'registerExpert']);
-
-Route::get('/register/tutor', [RegisterController::class, 'showTutorRegistration'])->name('register.tutor');
-Route::post('/register/tutor', [RegisterController::class, 'registerTutor']);
-
-Route::get('/register/creator', [RegisterController::class, 'showCreatorRegistration'])->name('register.creator');
-Route::post('/register/creator', [RegisterController::class, 'registerCreator']);
-
-// Dashboard route - will redirect based on role
+// Dashboard route - Smart redirect based on user role
 Route::get('/dashboard', function () {
     if (!auth()->check()) {
         return redirect()->route('login');
@@ -234,28 +228,21 @@ Route::get('/dashboard', function () {
     
     $user = auth()->user();
     
-    if ($user->hasRole('super_admin') || $user->hasRole('admin')) {
-        return redirect('/admin/dashboard');
+    if ($user->isSuperAdmin() || $user->isAdmin()) {
+        return redirect('/platform');
     }
     
-    if ($user->hasRole('student')) {
-        return redirect('/student/dashboard');
+    if ($user->isExpert()) {
+        return redirect('/expert');
     }
     
-    if ($user->hasRole('expert')) {
-        return redirect('/expert/dashboard');
+    if ($user->isTutor()) {
+        return redirect('/tutor');
     }
     
-    if ($user->hasRole('tutor')) {
-        return redirect('/tutor/dashboard');
+    if ($user->isContentCreator()) {
+        return redirect('/creator');
     }
     
-    if ($user->hasRole('content_creator')) {
-        return redirect('/creator/dashboard');
-    }
-    
-    return view('dashboard');
+    return redirect('/student');
 })->name('dashboard');
-
-// Include role-protected routes
-require __DIR__.'/role-protected.php';

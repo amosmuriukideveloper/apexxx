@@ -26,7 +26,8 @@ class TutorPanelProvider extends PanelProvider
             ->id('tutor')
             ->path('tutor')
             ->login()
-            ->brandName('Tutor Panel')
+            ->registration()
+            ->brandName('Tutor Dashboard')
             ->brandLogo(asset('images/logo.png'))
             ->favicon(asset('favicon.ico'))
             ->colors([
@@ -45,26 +46,11 @@ class TutorPanelProvider extends PanelProvider
                 Widgets\AccountWidget::class,
             ])
             ->navigationGroups([
-                'Sessions' => [
-                    'icon' => 'heroicon-o-chat-bubble-left-right',
-                    'sort' => 1,
-                ],
-                'Students' => [
-                    'icon' => 'heroicon-o-users',
-                    'sort' => 2,
-                ],
-                'Schedule' => [
-                    'icon' => 'heroicon-o-calendar',
-                    'sort' => 3,
-                ],
-                'Earnings' => [
-                    'icon' => 'heroicon-o-banknotes',
-                    'sort' => 4,
-                ],
-                'Profile' => [
-                    'icon' => 'heroicon-o-user',
-                    'sort' => 5,
-                ],
+                'Sessions',
+                'Students',
+                'Schedule',
+                'Earnings',
+                'Profile',
             ])
             ->middleware([
                 EncryptCookies::class,

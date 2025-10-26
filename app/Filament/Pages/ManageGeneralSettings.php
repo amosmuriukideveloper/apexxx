@@ -55,7 +55,6 @@ class ManageGeneralSettings extends SettingsPage
                         Forms\Components\TextInput::make('contact_email')
                             ->label('Contact Email')
                             ->email()
-                            ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('contact_phone')
                             ->label('Contact Phone')
@@ -84,7 +83,7 @@ class ManageGeneralSettings extends SettingsPage
                                 'ar' => 'Arabic',
                                 'zh' => 'Chinese',
                             ])
-                            ->required()
+                            ->default('en')
                             ->searchable(),
                         Forms\Components\Select::make('timezone')
                             ->label('Timezone')
@@ -102,7 +101,7 @@ class ManageGeneralSettings extends SettingsPage
                                 'Asia/Tokyo' => 'Asia/Tokyo',
                             ])
                             ->searchable()
-                            ->required(),
+                            ->default('UTC'),
                         Forms\Components\Select::make('date_format')
                             ->label('Date Format')
                             ->options([
@@ -111,7 +110,7 @@ class ManageGeneralSettings extends SettingsPage
                                 'd/m/Y' => 'DD/MM/YYYY (31/01/2024)',
                                 'Y.m.d' => 'YYYY.MM.DD (2024.01.31)',
                             ])
-                            ->required(),
+                            ->default('Y-m-d'),
                         Forms\Components\Select::make('time_format')
                             ->label('Time Format')
                             ->options([
@@ -120,7 +119,7 @@ class ManageGeneralSettings extends SettingsPage
                                 'H:i' => '24-hour no seconds (23:59)',
                                 'h:i A' => '12-hour no seconds (11:59 PM)',
                             ])
-                            ->required(),
+                            ->default('H:i:s'),
                     ])->columns(4),
 
                 Forms\Components\Section::make('Currency Settings')
@@ -138,11 +137,11 @@ class ManageGeneralSettings extends SettingsPage
                                 'JPY' => 'JPY - Japanese Yen',
                                 'CNY' => 'CNY - Chinese Yuan',
                             ])
-                            ->required()
+                            ->default('USD')
                             ->searchable(),
                         Forms\Components\TextInput::make('currency_symbol')
                             ->label('Currency Symbol')
-                            ->required()
+                            ->default('$')
                             ->maxLength(10)
                             ->placeholder('$, €, £'),
                         Forms\Components\Select::make('currency_position')
@@ -153,7 +152,7 @@ class ManageGeneralSettings extends SettingsPage
                                 'before_space' => 'Before with space ($ 100)',
                                 'after_space' => 'After with space (100 $)',
                             ])
-                            ->required(),
+                            ->default('before'),
                     ])->columns(3),
 
                 Forms\Components\Section::make('Feature Toggles')
@@ -263,14 +262,5 @@ class ManageGeneralSettings extends SettingsPage
                             ->prefix('https://'),
                     ])->columns(2),
             ]);
-    }
-
-    public function getFormActions(): array
-    {
-        return [
-            Forms\Components\Actions\Action::make('save')
-                ->label('Save Settings')
-                ->submit('save'),
-        ];
     }
 }

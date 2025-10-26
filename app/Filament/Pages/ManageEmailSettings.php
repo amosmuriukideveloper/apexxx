@@ -146,14 +146,4 @@ class ManageEmailSettings extends SettingsPage
                     ]),
             ]);
     }
-
-
-    public function getFormActions(): array
-    {
-        return [
-            Forms\Components\Actions\Action::make('save')
-                ->label('Save Settings')
-                ->submit('save'),
-        ];
-    }
 }

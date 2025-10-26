@@ -9,6 +9,7 @@ class TutoringRequest extends Model
 {
     use HasFactory;
 
+    // ONLY columns that exist in the OLD tutoring_requests table
     protected $fillable = [
         'request_number',
         'student_id',

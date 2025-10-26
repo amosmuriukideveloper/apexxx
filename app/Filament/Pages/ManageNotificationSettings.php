@@ -143,14 +143,4 @@ class ManageNotificationSettings extends SettingsPage
                     ])->collapsible(),
             ]);
     }
-
-
-    public function getFormActions(): array
-    {
-        return [
-            Forms\Components\Actions\Action::make('save')
-                ->label('Save Settings')
-                ->submit('save'),
-        ];
-    }
 }

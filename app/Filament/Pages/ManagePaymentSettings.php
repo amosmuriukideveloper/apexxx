@@ -242,13 +242,4 @@ class ManagePaymentSettings extends SettingsPage
                     ])->columns(3),
             ]);
     }
-
-    public function getFormActions(): array
-    {
-        return [
-            Forms\Components\Actions\Action::make('save')
-                ->label('Save Settings')
-                ->submit('save'),
-        ];
-    }
 }

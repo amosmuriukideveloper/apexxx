@@ -8,41 +8,53 @@ class PaymentSettings extends Settings
 {
     // M-Pesa Settings
     public bool $mpesa_active;
-    public string $mpesa_environment;
-    public string $mpesa_consumer_key;
-    public string $mpesa_consumer_secret;
-    public string $mpesa_shortcode;
-    public string $mpesa_passkey;
-    public string $mpesa_callback_url;
-    public int $mpesa_timeout;
+    public ?string $mpesa_environment;
+    public ?string $mpesa_consumer_key;
+    public ?string $mpesa_consumer_secret;
+    public ?string $mpesa_shortcode;
+    public ?string $mpesa_passkey;
+    public ?string $mpesa_callback_url;
+    public ?int $mpesa_timeout;
 
     // PayPal Settings
     public bool $paypal_active;
-    public string $paypal_environment;
-    public string $paypal_client_id;
-    public string $paypal_client_secret;
-    public string $paypal_webhook_id;
-    public array $paypal_currencies;
-    public string $paypal_return_url;
-    public string $paypal_cancel_url;
+    public ?string $paypal_environment;
+    public ?string $paypal_client_id;
+    public ?string $paypal_client_secret;
+    public ?string $paypal_webhook_id;
+    public ?array $paypal_currencies;
+    public ?string $paypal_return_url;
+    public ?string $paypal_cancel_url;
 
     // PesaPal Settings
     public bool $pesapal_active;
     public bool $pesapal_demo_mode;
-    public string $pesapal_consumer_key;
-    public string $pesapal_consumer_secret;
-    public string $pesapal_ipn_url;
-    public array $pesapal_card_types;
+    public ?string $pesapal_consumer_key;
+    public ?string $pesapal_consumer_secret;
+    public ?string $pesapal_ipn_url;
+    public ?array $pesapal_card_types;
 
     // General Payment Settings
-    public float $commission_rate;
-    public float $minimum_payout;
-    public string $payout_schedule;
+    public ?float $commission_rate;
+    public ?float $minimum_payout;
+    public ?string $payout_schedule;
 
     public static function group(): string
     {
         return 'payment';
     }
+
+    // Note: Encryption removed to avoid DecryptException with empty default values
+    // Re-enable when adding real API credentials
+    // public static function encrypted(): array
+    // {
+    //     return [
+    //         'mpesa_consumer_secret',
+    //         'mpesa_passkey',
+    //         'paypal_client_secret',
+    //         'pesapal_consumer_secret',
+    //     ];
+    // }
 
     public static function defaults(): array
     {

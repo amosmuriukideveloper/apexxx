@@ -46,38 +46,15 @@ class AdminPanelProvider extends PanelProvider
                 Widgets\AccountWidget::class,
             ])
             ->navigationGroups([
-                'Projects' => [
-                    'icon' => 'heroicon-o-briefcase',
-                    'sort' => 1,
-                ],
-                'Learning' => [
-                    'icon' => 'heroicon-o-academic-cap',
-                    'sort' => 2,
-                ],
-                'Tutoring' => [
-                    'icon' => 'heroicon-o-chat-bubble-left-right',
-                    'sort' => 3,
-                ],
-                'Financial' => [
-                    'icon' => 'heroicon-o-banknotes',
-                    'sort' => 4,
-                ],
-                'Communication' => [
-                    'icon' => 'heroicon-o-envelope',
-                    'sort' => 5,
-                ],
-                'Analytics' => [
-                    'icon' => 'heroicon-o-chart-bar',
-                    'sort' => 6,
-                ],
-                'User Management' => [
-                    'icon' => 'heroicon-o-users',
-                    'sort' => 7,
-                ],
-                'System' => [
-                    'icon' => 'heroicon-o-cog-6-tooth',
-                    'sort' => 8,
-                ],
+                'Projects',
+                'Learning',
+                'Tutoring',
+                'Financial',
+                'Communication',
+                'Analytics',
+                'User Management',
+                'Settings',
+                'System',
             ])
             ->middleware([
                 EncryptCookies::class,

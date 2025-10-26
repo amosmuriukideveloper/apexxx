@@ -26,7 +26,8 @@ class CreatorPanelProvider extends PanelProvider
             ->id('creator')
             ->path('creator')
             ->login()
-            ->brandName('Creator Studio')
+            ->registration()
+            ->brandName('Content Creator Panel')
             ->brandLogo(asset('images/logo.png'))
             ->favicon(asset('favicon.ico'))
             ->colors([
@@ -45,22 +46,10 @@ class CreatorPanelProvider extends PanelProvider
                 Widgets\AccountWidget::class,
             ])
             ->navigationGroups([
-                'My Content' => [
-                    'icon' => 'heroicon-o-academic-cap',
-                    'sort' => 1,
-                ],
-                'Analytics' => [
-                    'icon' => 'heroicon-o-chart-bar',
-                    'sort' => 2,
-                ],
-                'Earnings' => [
-                    'icon' => 'heroicon-o-banknotes',
-                    'sort' => 3,
-                ],
-                'Profile' => [
-                    'icon' => 'heroicon-o-user',
-                    'sort' => 4,
-                ],
+                'My Content',
+                'Analytics',
+                'Earnings',
+                'Profile',
             ])
             ->middleware([
                 EncryptCookies::class,

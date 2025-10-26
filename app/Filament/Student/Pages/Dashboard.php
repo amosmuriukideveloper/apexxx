@@ -13,9 +13,9 @@ class Dashboard extends BaseDashboard
     public function getWidgets(): array
     {
         return [
-            \App\Filament\Student\Widgets\StudentStatsOverview::class,
-            \App\Filament\Student\Widgets\RecentProjects::class,
-            \App\Filament\Student\Widgets\EnrolledCourses::class,
+            \App\Filament\Student\Widgets\LearningStatsWidget::class,
+            \App\Filament\Student\Widgets\ContinueLearningWidget::class,
+            \App\Filament\Student\Widgets\RecommendedCoursesWidget::class,
         ];
     }
 

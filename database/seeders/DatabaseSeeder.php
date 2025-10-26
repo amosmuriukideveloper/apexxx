@@ -66,12 +66,12 @@ class DatabaseSeeder extends Seeder
         });
 
         // Seed content and transactions
-        $this->call([
-            ProjectSeeder::class,
-            CourseSeeder::class,
-            TutoringSeeder::class,
-            StudyResourceSeeder::class,
-            WalletSeeder::class,
-        ]);
+        // $this->call([
+        //     ProjectSeeder::class,
+        //     CourseSeeder::class,
+        //     TutoringSeeder::class,
+        //     StudyResourceSeeder::class,
+        //     WalletSeeder::class,
+        // ]);
     }
 }
