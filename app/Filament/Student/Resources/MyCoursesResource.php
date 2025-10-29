@@ -19,6 +19,12 @@ class MyCoursesResource extends Resource
     protected static ?int $navigationSort = 2;
     protected static ?string $modelLabel = 'My Course';
 
+    // Allow all students to view their courses - bypass policy
+    public static function canViewAny(): bool
+    {
+        return true;
+    }
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()

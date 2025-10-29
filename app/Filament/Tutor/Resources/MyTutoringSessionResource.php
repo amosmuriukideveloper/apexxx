@@ -16,8 +16,8 @@ class MyTutoringSessionResource extends Resource
 {
     protected static ?string $model = TutoringRequest::class;
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
-    protected static ?string $navigationLabel = 'My Sessions';
-    protected static ?string $navigationGroup = 'Tutoring';
+    protected static ?string $navigationLabel = 'All Sessions';
+    protected static ?string $navigationGroup = 'Sessions';
     protected static ?int $navigationSort = 1;
 
     public static function table(Table $table): Table
@@ -43,10 +43,10 @@ class MyTutoringSessionResource extends Resource
                     ->label('Topic')
                     ->limit(30),
                 
-                Tables\Columns\TextColumn::make('confirmed_date')
+                Tables\Columns\TextColumn::make('preferred_date')
                     ->label('Scheduled')
-                    ->dateTime('M d, H:i')
-                    ->placeholder(fn ($record) => $record->preferred_date->format('M d, H:i') . ' (Proposed)')
+                    ->date('M d')
+                    ->description(fn ($record) => $record->preferred_time ? 'at ' . $record->preferred_time : '')
                     ->sortable(),
                 
                 Tables\Columns\TextColumn::make('duration')
@@ -55,7 +55,7 @@ class MyTutoringSessionResource extends Resource
                 Tables\Columns\BadgeColumn::make('status')
                     ->colors([
                         'warning' => 'pending_tutor_response',
-                        'primary' => 'confirmed',
+                        'primary' => 'scheduled',
                         'success' => 'completed',
                         'danger' => 'cancelled',
                     ])
@@ -69,14 +69,13 @@ class MyTutoringSessionResource extends Resource
                 Tables\Filters\SelectFilter::make('status')
                     ->options([
                         'pending_tutor_response' => 'Needs Response',
-                        'confirmed' => 'Confirmed',
+                        'scheduled' => 'Scheduled',
                         'completed' => 'Completed',
                     ]),
                 
                 Tables\Filters\Filter::make('upcoming')
                     ->label('Upcoming Only')
-                    ->query(fn (Builder $query) => $query->where('confirmed_date', '>', now())
-                        ->orWhere(fn ($q) => $q->whereNull('confirmed_date')->where('preferred_date', '>', now()))),
+                    ->query(fn (Builder $query) => $query->where('preferred_date', '>=', now()->toDateString())),
             ])
             ->actions([
                 Tables\Actions\Action::make('respond')
@@ -115,10 +114,7 @@ class MyTutoringSessionResource extends Resource
                     ->action(function ($record, array $data) {
                         if ($data['response'] === 'accept') {
                             $record->update([
-                                'status' => 'confirmed',
-                                'confirmed_date' => $record->preferred_date,
-                                'tutor_response_date' => now(),
-                                'tutor_notes' => $data['tutor_notes'] ?? null,
+                                'status' => 'scheduled',
                             ]);
                             
                             \Filament\Notifications\Notification::make()
@@ -163,14 +159,14 @@ class MyTutoringSessionResource extends Resource
                     ->color('success')
                     ->url(fn ($record) => $record->google_meet_link)
                     ->openUrlInNewTab()
-                    ->visible(fn ($record) => $record->status === 'confirmed' && $record->google_meet_link),
+                    ->visible(fn ($record) => $record->status === 'scheduled' && $record->google_meet_link),
                 
                 Tables\Actions\Action::make('complete_session')
                     ->label('Complete')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->url(fn ($record) => static::getUrl('complete', ['record' => $record]))
-                    ->visible(fn ($record) => $record->status === 'confirmed'),
+                    ->visible(fn ($record) => $record->status === 'scheduled'),
                 
                 Tables\Actions\ViewAction::make(),
             ])

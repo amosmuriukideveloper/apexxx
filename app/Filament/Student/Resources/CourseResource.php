@@ -21,6 +21,12 @@ class CourseResource extends Resource
     protected static ?int $navigationSort = 1;
     protected static ?string $modelLabel = 'Course';
 
+    // Allow all students to view courses - bypass policy
+    public static function canViewAny(): bool
+    {
+        return true;
+    }
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->published();
@@ -44,7 +50,7 @@ class CourseResource extends Resource
                     ->label('Instructor')
                     ->searchable(),
                 
-                Tables\Columns\TextColumn::make('category.name')
+                Tables\Columns\TextColumn::make('category')
                     ->label('Category')
                     ->badge()
                     ->searchable(),
@@ -77,9 +83,21 @@ class CourseResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('category')
-                    ->relationship('category', 'name')
-                    ->searchable()
-                    ->preload(),
+                    ->options([
+                        'mathematics' => 'Mathematics',
+                        'physics' => 'Physics',
+                        'chemistry' => 'Chemistry',
+                        'biology' => 'Biology',
+                        'computer_science' => 'Computer Science',
+                        'engineering' => 'Engineering',
+                        'business' => 'Business',
+                        'economics' => 'Economics',
+                        'literature' => 'Literature',
+                        'history' => 'History',
+                        'art' => 'Art & Design',
+                        'music' => 'Music',
+                    ])
+                    ->searchable(),
                 
                 Tables\Filters\SelectFilter::make('difficulty')
                     ->options([

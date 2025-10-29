@@ -40,6 +40,9 @@ class TutorPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Tutor/Pages'), for: 'App\\Filament\\Tutor\\Pages')
             ->pages([
                 \App\Filament\Tutor\Pages\Dashboard::class,
+                \App\Filament\Tutor\Pages\PendingRequests::class,
+                \App\Filament\Tutor\Pages\ScheduledSessions::class,
+                \App\Filament\Tutor\Pages\CompletedSessions::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Tutor/Widgets'), for: 'App\\Filament\\Tutor\\Widgets')
             ->widgets([
@@ -66,6 +69,8 @@ class TutorPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->authGuard('web');
+            ->authGuard('web')
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('30s');
     }
 }

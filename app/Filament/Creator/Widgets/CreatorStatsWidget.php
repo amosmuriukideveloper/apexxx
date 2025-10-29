@@ -24,12 +24,12 @@ class CreatorStatsWidget extends BaseWidget
         
         $totalRevenue = CourseEnrollment::whereHas('course', function ($query) use ($creatorId) {
             $query->where('creator_id', $creatorId);
-        })->where('status', '!=', 'refunded')->sum('amount_paid');
+        })->where('payment_status', '!=', 'refunded')->sum('amount_paid');
         
         $thisMonthRevenue = CourseEnrollment::whereHas('course', function ($query) use ($creatorId) {
             $query->where('creator_id', $creatorId);
         })
-        ->where('status', '!=', 'refunded')
+        ->where('payment_status', '!=', 'refunded')
         ->whereMonth('created_at', now()->month)
         ->whereYear('created_at', now()->year)
         ->sum('amount_paid');
@@ -37,7 +37,7 @@ class CreatorStatsWidget extends BaseWidget
         $lastMonthRevenue = CourseEnrollment::whereHas('course', function ($query) use ($creatorId) {
             $query->where('creator_id', $creatorId);
         })
-        ->where('status', '!=', 'refunded')
+        ->where('payment_status', '!=', 'refunded')
         ->whereMonth('created_at', now()->subMonth()->month)
         ->whereYear('created_at', now()->subMonth()->year)
         ->sum('amount_paid');
@@ -95,7 +95,7 @@ class CreatorStatsWidget extends BaseWidget
             $revenue = CourseEnrollment::whereHas('course', function ($query) use ($creatorId) {
                 $query->where('creator_id', $creatorId);
             })
-            ->where('status', '!=', 'refunded')
+            ->where('payment_status', '!=', 'refunded')
             ->whereMonth('created_at', $date->month)
             ->whereYear('created_at', $date->year)
             ->sum('amount_paid');

@@ -185,9 +185,10 @@ class TutoringRequestResource extends Resource
                     ->multiple(),
                 Tables\Filters\SelectFilter::make('tutor_id')
                     ->label('Tutor')
-                    ->relationship('tutor', 'name')
-                    ->searchable()
-                    ->preload(),
+                    ->options(function () {
+                        return Tutor::pluck('name', 'id')->toArray();
+                    })
+                    ->searchable(),
                 Tables\Filters\Filter::make('unassigned')
                     ->label('Unassigned Only')
                     ->query(fn ($query) => $query->whereNull('tutor_id')),

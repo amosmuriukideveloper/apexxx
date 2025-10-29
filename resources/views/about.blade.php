@@ -6,7 +6,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center animate-on-scroll">
             <h1 class="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-                About <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Apex Scholars</span>
+                About <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Scholars Quiver</span>
             </h1>
             <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
                 Empowering students worldwide with exceptional academic support, expert guidance, and innovative learning solutions since our inception.
@@ -22,7 +22,7 @@
             <div class="animate-on-scroll">
                 <h2 class="text-4xl font-bold text-gray-900 mb-8">Our Mission</h2>
                 <p class="text-lg text-gray-600 leading-relaxed mb-6">
-                    At Apex Scholars Nexus, we believe that every student deserves access to high-quality academic support. Our mission is to bridge the gap between academic challenges and student success by providing personalized, expert-driven educational services.
+                    At Scholars Quiver, we believe that every student deserves access to high-quality academic support. Our mission is to bridge the gap between academic challenges and student success by providing personalized, expert-driven educational services.
                 </p>
                 <p class="text-lg text-gray-600 leading-relaxed mb-8">
                     We are committed to fostering academic excellence, critical thinking, and lifelong learning through innovative approaches and cutting-edge resources.
@@ -78,7 +78,7 @@
         <div class="text-center mb-16 animate-on-scroll">
             <h2 class="text-4xl font-bold text-gray-900 mb-6">Our Story</h2>
             <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                Founded by a team of passionate educators and technology enthusiasts, Apex Scholars Nexus was born from a simple yet powerful idea.
+                Founded by a team of passionate educators and technology enthusiasts, Scholars Quiver was born from a simple yet powerful idea.
             </p>
         </div>
 
@@ -221,7 +221,7 @@
         <div class="text-center mb-16 animate-on-scroll">
             <h2 class="text-4xl font-bold text-gray-900 mb-6">Our Core Values</h2>
             <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                The principles that guide everything we do at Apex Scholars Nexus.
+                The principles that guide everything we do at Scholars Quiver.
             </p>
         </div>
 

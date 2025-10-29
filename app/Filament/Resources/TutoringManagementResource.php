@@ -35,7 +35,7 @@ class TutoringManagementResource extends Resource
                     ->searchable()
                     ->sortable(),
                 
-                Tables\Columns\TextColumn::make('subject.name')
+                Tables\Columns\TextColumn::make('subject')
                     ->label('Subject')
                     ->badge()
                     ->color('info')
@@ -96,11 +96,15 @@ class TutoringManagementResource extends Resource
                     ])
                     ->default('pending_assignment'),
                 
-                Tables\Filters\SelectFilter::make('subject_id')
+                Tables\Filters\SelectFilter::make('subject')
                     ->label('Subject')
-                    ->relationship('subject', 'name')
-                    ->searchable()
-                    ->preload(),
+                    ->options(function () {
+                        return TutoringRequest::distinct()
+                            ->pluck('subject', 'subject')
+                            ->filter()
+                            ->toArray();
+                    })
+                    ->searchable(),
                 
                 Tables\Filters\Filter::make('unassigned')
                     ->label('Unassigned Only')

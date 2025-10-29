@@ -4,6 +4,9 @@ namespace App\Filament\Student\Resources\TutoringRequestResource\Pages;
 
 use App\Filament\Student\Resources\TutoringRequestResource;
 use App\Models\TutoringRequest;
+use App\Services\MpesaService;
+use App\Services\PayPalService;
+use App\Services\PesapalService;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\Auth;
 
@@ -46,26 +49,45 @@ class TutoringPayment extends Page
         $this->processing = true;
         
         try {
-            // TODO: Integrate with M-Pesa STK Push API
-            // Example: $mpesa->STKPush($this->phoneNumber, $amount, ...)
+            $mpesaService = new MpesaService();
             
-            // Simulate API call
-            sleep(2);
+            // Get the amount to charge
+            $amount = $this->record->total_price ?? $this->record->base_price ?? 50;
             
-            $this->record->update([
-                'status' => 'pending', // Keep as pending for old schema
-            ]);
+            if ($amount <= 0) {
+                throw new \Exception('Invalid payment amount.');
+            }
             
-            \Filament\Notifications\Notification::make()
-                ->title('Payment Successful! 🎉')
-                ->success()
-                ->body('Your tutoring request has been submitted. Admin will assign a tutor shortly.')
-                ->duration(5000)
-                ->send();
+            $result = $mpesaService->initiateSTKPush(
+                $this->phoneNumber,
+                $amount,
+                $this->record->request_number,
+                'Payment for Tutoring Request #' . $this->record->request_number
+            );
             
-            $this->processing = false;
-            
-            return redirect()->to(route('filament.student.resources.tutoring-requests.index'));
+            if ($result['success']) {
+                \Filament\Notifications\Notification::make()
+                    ->title('STK Push Sent! 📱')
+                    ->success()
+                    ->body($result['message'] . ' Please check your phone and enter your M-Pesa PIN.')
+                    ->duration(10000)
+                    ->send();
+                
+                $this->processing = false;
+                
+                // Store checkout request ID
+                session(['mpesa_checkout_request_id' => $result['checkout_request_id']]);
+                
+                // Mark as paid (in production, verify via callback)
+                $this->record->update([
+                    'status' => 'pending',
+                    'paid_at' => now(),
+                ]);
+                
+                return redirect()->to(route('filament.student.resources.tutoring-requests.index'));
+            } else {
+                throw new \Exception($result['message']);
+            }
             
         } catch (\Exception $e) {
             $this->processing = false;
@@ -82,23 +104,32 @@ class TutoringPayment extends Page
     public function processPayPalPayment()
     {
         try {
-            // TODO: Integrate with PayPal API
-            // Example: return redirect($paypal->getApprovalUrl());
+            $paypalService = new PayPalService();
             
-            sleep(1);
+            // Get the amount to charge
+            $amount = $this->record->total_price ?? $this->record->base_price ?? 50;
             
-            $this->record->update([
-                'status' => 'pending',
-            ]);
+            if ($amount <= 0) {
+                throw new \Exception('Invalid payment amount.');
+            }
             
-            \Filament\Notifications\Notification::make()
-                ->title('Payment Successful! 🎉')
-                ->success()
-                ->body('Your tutoring request has been submitted. Admin will assign a tutor shortly.')
-                ->duration(5000)
-                ->send();
+            $returnUrl = route('filament.student.resources.tutoring-requests.index') . '?paypal=success&request=' . $this->record->id;
+            $cancelUrl = route('filament.student.resources.tutoring-requests.payment', ['record' => $this->record->id]) . '?paypal=cancelled';
             
-            return redirect()->to(route('filament.student.resources.tutoring-requests.index'));
+            $result = $paypalService->createOrder(
+                $amount,
+                'USD',
+                $this->record->request_number,
+                $returnUrl,
+                $cancelUrl
+            );
+            
+            if ($result['success'] && isset($result['approval_url'])) {
+                session(['paypal_order_id' => $result['order_id']]);
+                return redirect()->away($result['approval_url']);
+            } else {
+                throw new \Exception($result['message'] ?? 'Failed to create PayPal order');
+            }
             
         } catch (\Exception $e) {
             \Filament\Notifications\Notification::make()
@@ -113,23 +144,39 @@ class TutoringPayment extends Page
     public function processPesapalPayment()
     {
         try {
-            // TODO: Integrate with Pesapal API
-            // Example: return redirect($pesapal->getIframeUrl());
+            $pesapalService = new PesapalService();
             
-            sleep(1);
+            // Get the amount to charge
+            $amount = $this->record->total_price ?? $this->record->base_price ?? 50;
             
-            $this->record->update([
-                'status' => 'pending',
-            ]);
+            if ($amount <= 0) {
+                throw new \Exception('Invalid payment amount.');
+            }
             
-            \Filament\Notifications\Notification::make()
-                ->title('Payment Successful! 🎉')
-                ->success()
-                ->body('Your tutoring request has been submitted. Admin will assign a tutor shortly.')
-                ->duration(5000)
-                ->send();
+            $callbackUrl = route('filament.student.resources.tutoring-requests.index') . '?pesapal=callback&request=' . $this->record->id;
             
-            return redirect()->to(route('filament.student.resources.tutoring-requests.index'));
+            $customerDetails = [
+                'email' => Auth::user()->email,
+                'phone' => Auth::user()->phone ?? '',
+                'first_name' => Auth::user()->name ?? 'Customer',
+                'last_name' => '',
+            ];
+            
+            $result = $pesapalService->submitOrderRequest(
+                $amount,
+                'KES',
+                $this->record->request_number,
+                'Payment for Tutoring Request #' . $this->record->request_number,
+                $callbackUrl,
+                $customerDetails
+            );
+            
+            if ($result['success'] && isset($result['redirect_url'])) {
+                session(['pesapal_order_tracking_id' => $result['order_tracking_id']]);
+                return redirect()->away($result['redirect_url']);
+            } else {
+                throw new \Exception($result['message'] ?? 'Failed to create Pesapal order');
+            }
             
         } catch (\Exception $e) {
             \Filament\Notifications\Notification::make()

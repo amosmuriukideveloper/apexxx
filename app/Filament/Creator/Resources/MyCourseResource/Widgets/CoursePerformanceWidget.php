@@ -13,12 +13,14 @@ class CoursePerformanceWidget extends BaseWidget
     {
         $enrollments = $this->record->enrollments;
         $totalEnrollments = $enrollments->count();
-        $activeEnrollments = $enrollments->where('status', 'active')->count();
-        $completedEnrollments = $enrollments->where('status', 'completed')->count();
+        // Note: course_enrollments doesn't have status column, only payment_status
+        // Using completion_percentage to determine active vs completed
+        $activeEnrollments = $enrollments->where('completion_percentage', '<', 100)->count();
+        $completedEnrollments = $enrollments->where('completion_percentage', '=', 100)->count();
         
-        $revenue = $enrollments->where('status', '!=', 'refunded')->sum('amount_paid');
+        $revenue = $enrollments->where('payment_status', '!=', 'refunded')->sum('amount_paid');
         $thisMonthRevenue = $enrollments
-            ->where('status', '!=', 'refunded')
+            ->where('payment_status', '!=', 'refunded')
             ->where('created_at', '>=', now()->startOfMonth())
             ->sum('amount_paid');
         

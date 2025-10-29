@@ -13,11 +13,12 @@ class ListTutoringRequests extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make('tutor_availability')
-                ->label('View Tutor Availability')
-                ->icon('heroicon-o-calendar')
-                ->url(route('filament.admin.pages.tutor-availability'))
-                ->color('info'),
+            // TODO: Create TutorAvailability page
+            // Actions\Action::make('tutor_availability')
+            //     ->label('View Tutor Availability')
+            //     ->icon('heroicon-o-calendar')
+            //     ->url(route('filament.platform.pages.tutor-availability'))
+            //     ->color('info'),
         ];
     }
 }

@@ -28,7 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('platform')
             ->path('/platform')
             ->login()
-            ->brandName('Apex Scholars')
+            ->brandName('Scholars Quiver')
             ->favicon(asset('favicon.ico'))
             ->colors([
                 'primary' => Color::Blue,

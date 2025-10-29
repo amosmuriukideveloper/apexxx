@@ -20,6 +20,12 @@ class ProjectResource extends Resource
     protected static ?string $navigationGroup = 'Projects';
     protected static ?int $navigationSort = 1;
 
+    // Allow all students to view their projects - bypass policy
+    public static function canViewAny(): bool
+    {
+        return true;
+    }
+
     public static function getNavigationBadge(): ?string
     {
         return (string) Project::where('student_id', Auth::id())

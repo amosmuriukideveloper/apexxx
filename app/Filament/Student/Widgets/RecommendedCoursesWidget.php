@@ -17,14 +17,14 @@ class RecommendedCoursesWidget extends BaseWidget
     {
         // Get categories from enrolled courses
         $enrolledCourseIds = Auth::user()->enrolledCourses()->pluck('courses.id');
-        $enrolledCategories = Auth::user()->enrolledCourses()->pluck('category_id')->unique();
+        $enrolledCategories = Auth::user()->enrolledCourses()->pluck('category')->unique();
         
         return $table
             ->query(
                 Course::published()
                     ->whereNotIn('id', $enrolledCourseIds)
                     ->when($enrolledCategories->isNotEmpty(), function ($query) use ($enrolledCategories) {
-                        $query->whereIn('category_id', $enrolledCategories);
+                        $query->whereIn('category', $enrolledCategories);
                     })
                     ->orderBy('average_rating', 'desc')
                     ->orderBy('total_enrollments', 'desc')

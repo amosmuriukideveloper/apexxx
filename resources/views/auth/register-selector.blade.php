@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Apex Scholars</title>
+    <title>Register - Scholars Quiver</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gradient-to-br from-green-50 to-emerald-100 min-h-screen flex items-center justify-center p-4">
     <div class="max-w-5xl w-full">
         <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-gray-900 mb-2">Join Apex Scholars</h1>
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">Join Scholars Quiver</h1>
             <p class="text-gray-600">Choose your path and start your journey with us</p>
         </div>
 
@@ -64,7 +64,7 @@
         </div>
 
         <div class="bg-white rounded-lg shadow-lg p-6 mt-8">
-            <h3 class="text-lg font-semibold text-gray-900 mb-3">Why Join Apex Scholars?</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">Why Join Scholars Quiver?</h3>
             <div class="grid md:grid-cols-3 gap-4">
                 <div class="flex items-start space-x-3">
                     <svg class="w-6 h-6 text-green-600 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

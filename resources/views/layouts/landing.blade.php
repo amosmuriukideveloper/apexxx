@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'Apex Scholars Nexus') }}</title>
+    <title>{{ config('app.name', 'Scholars Quiver') }}</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -32,7 +32,7 @@
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
                         <a href="{{ url('/') }}" class="flex-shrink-0 transition-transform hover:scale-105">
-                            <span class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Apex Scholars</span>
+                            <span class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Scholars Quiver</span>
                         </a>
                         <nav class="hidden md:ml-10 md:flex space-x-8">
                             <a href="{{ url('/') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-200 relative group">
@@ -135,7 +135,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                     <div class="space-y-4">
-                        <h3 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Apex Scholars</h3>
+                        <h3 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Scholars Quiver</h3>
                         <p class="text-gray-400 text-sm leading-relaxed">Empowering students with quality academic support and resources to achieve their educational goals and unlock their full potential.</p>
                         <div class="flex space-x-4">
                             <a href="#" class="text-gray-400 hover:text-blue-400 transition-colors duration-200">
@@ -183,7 +183,7 @@
                 </div>
                 <div class="mt-12 pt-8 border-t border-gray-800">
                     <div class="flex flex-col md:flex-row justify-between items-center">
-                        <p class="text-center text-gray-400 text-sm">&copy; {{ date('Y') }} Apex Scholars Nexus. All rights reserved.</p>
+                        <p class="text-center text-gray-400 text-sm">&copy; {{ date('Y') }} Scholars Quiver. All rights reserved.</p>
                         <div class="flex space-x-6 mt-4 md:mt-0">
                             <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors duration-200">Privacy</a>
                             <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors duration-200">Terms</a>

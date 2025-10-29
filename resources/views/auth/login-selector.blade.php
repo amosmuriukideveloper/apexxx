@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Apex Scholars</title>
+    <title>Login - Scholars Quiver</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4">
     <div class="max-w-4xl w-full">
         <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-gray-900 mb-2">Welcome to Apex Scholars</h1>
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">Welcome to Scholars Quiver</h1>
             <p class="text-gray-600">Select your role to continue to your dashboard</p>
         </div>
 

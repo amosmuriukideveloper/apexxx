@@ -32,11 +32,11 @@ class CourseAnalyticsWidget extends BaseWidget
             : 0;
         
         // Total revenue
-        $totalRevenue = CourseEnrollment::where('status', '!=', 'refunded')
+        $totalRevenue = CourseEnrollment::where('payment_status', '!=', 'refunded')
             ->sum('amount_paid');
         
         // This month revenue
-        $thisMonthRevenue = CourseEnrollment::where('status', '!=', 'refunded')
+        $thisMonthRevenue = CourseEnrollment::where('payment_status', '!=', 'refunded')
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->sum('amount_paid');
@@ -55,7 +55,7 @@ class CourseAnalyticsWidget extends BaseWidget
                 ->description('Awaiting approval')
                 ->descriptionIcon('heroicon-o-clock')
                 ->color('warning')
-                ->url(route('filament.admin.resources.courses.index', ['status' => 'pending_review'])),
+                ->url(route('filament.platform.resources.courses.index', ['status' => 'pending_review'])),
             
             Stat::make('Total Enrollments', number_format($totalEnrollments))
                 ->description($enrollmentTrend >= 0 ? "+{$enrollmentTrend}% vs last month" : "{$enrollmentTrend}% vs last month")
@@ -82,7 +82,7 @@ class CourseAnalyticsWidget extends BaseWidget
     
     protected function calculateCompletionRate(): string
     {
-        $completed = CourseEnrollment::where('status', 'completed')->count();
+        $completed = CourseEnrollment::whereNotNull('completed_at')->count();
         $total = CourseEnrollment::count();
         
         if ($total === 0) {

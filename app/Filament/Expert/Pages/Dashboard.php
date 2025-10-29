@@ -9,10 +9,13 @@ class Dashboard extends BaseDashboard
     protected static string $routePath = '/';
     
     protected static ?string $title = 'Expert Dashboard';
+    protected static ?string $navigationIcon = 'heroicon-o-home';
 
     public function getWidgets(): array
     {
-        return [];
+        return [
+            \App\Filament\Expert\Widgets\ExpertStatsWidget::class,
+        ];
     }
 
     public function getColumns(): int | string | array

@@ -4,6 +4,9 @@ namespace App\Filament\Student\Resources\ProjectResource\Pages;
 
 use App\Filament\Student\Resources\ProjectResource;
 use App\Models\Project;
+use App\Services\MpesaService;
+use App\Services\PayPalService;
+use App\Services\PesapalService;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\Auth;
 
@@ -48,28 +51,53 @@ class ProjectPayment extends Page
         $this->processing = true;
         
         try {
-            // TODO: Integrate with M-Pesa STK Push API
-            // Example integration:
-            // $mpesa = new \Safaricom\Mpesa\Mpesa();
-            // $response = $mpesa->STKPush($this->phoneNumber, $this->record->budget, ...);
+            $mpesaService = new MpesaService();
             
-            // For now, simulate successful payment
-            sleep(2); // Simulate API call
+            // Get the amount to charge
+            $amount = $this->record->budget ?? $this->record->total_price ?? 0;
             
-            $this->record->update([
-                'status' => 'assigned',
-            ]);
+            if ($amount <= 0) {
+                throw new \Exception('Invalid payment amount. Please recalculate pricing.');
+            }
             
-            \Filament\Notifications\Notification::make()
-                ->title('Payment Successful! 🎉')
-                ->success()
-                ->body('Your project has been submitted and will be assigned to an expert shortly.')
-                ->duration(5000)
-                ->send();
+            $result = $mpesaService->initiateSTKPush(
+                $this->phoneNumber,
+                $amount,
+                $this->record->project_number,
+                'Payment for Project #' . $this->record->project_number
+            );
             
-            $this->processing = false;
-            
-            return redirect()->to(route('filament.student.resources.projects.index'));
+            if ($result['success']) {
+                // Update project with payment initiation
+                $this->record->update([
+                    'payment_status' => 'pending',
+                    'status' => 'pending',
+                ]);
+                
+                \Filament\Notifications\Notification::make()
+                    ->title('STK Push Sent! 📱')
+                    ->success()
+                    ->body($result['message'] . ' Please check your phone and enter your M-Pesa PIN.')
+                    ->duration(10000)
+                    ->send();
+                
+                $this->processing = false;
+                
+                // Store checkout request ID for verification
+                session(['mpesa_checkout_request_id' => $result['checkout_request_id']]);
+                
+                // For now, simulate successful payment after STK push
+                // In production, you'd verify via callback
+                $this->record->update([
+                    'payment_status' => 'paid',
+                    'status' => 'assigned',
+                    'paid_at' => now(),
+                ]);
+                
+                return redirect()->to(route('filament.student.resources.projects.index'));
+            } else {
+                throw new \Exception($result['message']);
+            }
             
         } catch (\Exception $e) {
             $this->processing = false;
@@ -86,27 +114,35 @@ class ProjectPayment extends Page
     public function processPayPalPayment()
     {
         try {
-            // TODO: Integrate with PayPal API
-            // Example:
-            // $paypal = new \PayPal\Api\Payment();
-            // $approvalUrl = $paypal->create(...)->getApprovalLink();
-            // return redirect($approvalUrl);
+            $paypalService = new PayPalService();
             
-            // For now, simulate successful payment
-            sleep(1);
+            // Get the amount to charge
+            $amount = $this->record->budget ?? $this->record->total_price ?? 0;
             
-            $this->record->update([
-                'status' => 'assigned',
-            ]);
+            if ($amount <= 0) {
+                throw new \Exception('Invalid payment amount. Please recalculate pricing.');
+            }
             
-            \Filament\Notifications\Notification::make()
-                ->title('Payment Successful! 🎉')
-                ->success()
-                ->body('Your project has been submitted and will be assigned to an expert shortly.')
-                ->duration(5000)
-                ->send();
+            $returnUrl = route('filament.student.resources.projects.index') . '?paypal=success&project=' . $this->record->id;
+            $cancelUrl = route('filament.student.resources.projects.payment', ['record' => $this->record->id]) . '?paypal=cancelled';
             
-            return redirect()->to(route('filament.student.resources.projects.index'));
+            $result = $paypalService->createOrder(
+                $amount,
+                'USD',
+                $this->record->project_number,
+                $returnUrl,
+                $cancelUrl
+            );
+            
+            if ($result['success'] && isset($result['approval_url'])) {
+                // Store order ID for verification
+                session(['paypal_order_id' => $result['order_id']]);
+                
+                // Redirect to PayPal
+                return redirect()->away($result['approval_url']);
+            } else {
+                throw new \Exception($result['message'] ?? 'Failed to create PayPal order');
+            }
             
         } catch (\Exception $e) {
             \Filament\Notifications\Notification::make()
@@ -121,27 +157,42 @@ class ProjectPayment extends Page
     public function processPesapalPayment()
     {
         try {
-            // TODO: Integrate with Pesapal API
-            // Example:
-            // $pesapal = new \Pesapal\Pesapal();
-            // $iframeUrl = $pesapal->PostPesapalDirectOrderV4(...);
-            // return redirect($iframeUrl);
+            $pesapalService = new PesapalService();
             
-            // For now, simulate successful payment
-            sleep(1);
+            // Get the amount to charge
+            $amount = $this->record->budget ?? $this->record->total_price ?? 0;
             
-            $this->record->update([
-                'status' => 'assigned',
-            ]);
+            if ($amount <= 0) {
+                throw new \Exception('Invalid payment amount. Please recalculate pricing.');
+            }
             
-            \Filament\Notifications\Notification::make()
-                ->title('Payment Successful! 🎉')
-                ->success()
-                ->body('Your project has been submitted and will be assigned to an expert shortly.')
-                ->duration(5000)
-                ->send();
+            $callbackUrl = route('filament.student.resources.projects.index') . '?pesapal=callback&project=' . $this->record->id;
             
-            return redirect()->to(route('filament.student.resources.projects.index'));
+            $customerDetails = [
+                'email' => Auth::user()->email,
+                'phone' => Auth::user()->phone ?? '',
+                'first_name' => Auth::user()->name ?? 'Customer',
+                'last_name' => '',
+            ];
+            
+            $result = $pesapalService->submitOrderRequest(
+                $amount,
+                'KES',
+                $this->record->project_number,
+                'Payment for Project #' . $this->record->project_number,
+                $callbackUrl,
+                $customerDetails
+            );
+            
+            if ($result['success'] && isset($result['redirect_url'])) {
+                // Store order tracking ID for verification
+                session(['pesapal_order_tracking_id' => $result['order_tracking_id']]);
+                
+                // Redirect to Pesapal
+                return redirect()->away($result['redirect_url']);
+            } else {
+                throw new \Exception($result['message'] ?? 'Failed to create Pesapal order');
+            }
             
         } catch (\Exception $e) {
             \Filament\Notifications\Notification::make()

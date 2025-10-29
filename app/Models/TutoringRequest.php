@@ -17,18 +17,28 @@ class TutoringRequest extends Model
         'admin_id',
         'subject',
         'topic',
+        'specific_topic',
         'description',
         'preferred_date',
         'preferred_time',
         'session_duration',
+        'duration',
         'learning_goals',
         'status',
+        'base_price',
+        'platform_fee',
+        'total_price',
+        'paid_at',
         'assigned_at',
     ];
 
     protected $casts = [
         'preferred_date' => 'date',
         'assigned_at' => 'datetime',
+        'paid_at' => 'datetime',
+        'base_price' => 'decimal:2',
+        'platform_fee' => 'decimal:2',
+        'total_price' => 'decimal:2',
     ];
 
     public function student()

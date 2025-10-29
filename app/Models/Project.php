@@ -32,6 +32,7 @@ class Project extends Model
         'subject_area',
         'project_type',
         'complexity_level',
+        'difficulty_level',
         'word_count',
         'page_count',
         'special_instructions',
@@ -39,16 +40,20 @@ class Project extends Model
         'original_deadline',
         'urgency_hours',
         'urgency_multiplier',
+        'budget',
         'base_price',
         'urgency_fee',
         'complexity_fee',
         'total_price',
         'expert_earnings',
         'platform_fee',
+        'platform_commission',
         'status',
+        'payment_status',
         'student_id',
         'expert_id',
         'assigned_by',
+        'assigned_expert_id',
         'turnitin_score',
         'ai_detection_score',
         'revision_count',
@@ -73,12 +78,14 @@ class Project extends Model
         'original_deadline' => 'datetime',
         'reference_files' => 'array',
         'deliverable_files' => 'array',
+        'budget' => 'decimal:2',
         'base_price' => 'decimal:2',
         'urgency_fee' => 'decimal:2',
         'complexity_fee' => 'decimal:2',
         'total_price' => 'decimal:2',
         'expert_earnings' => 'decimal:2',
         'platform_fee' => 'decimal:2',
+        'platform_commission' => 'decimal:2',
         'urgency_multiplier' => 'decimal:2',
         'paid_at' => 'datetime',
         'assigned_at' => 'datetime',
@@ -320,8 +327,8 @@ class Project extends Model
         $basePrice = $this->page_count ? ($this->page_count * 10) : ($this->word_count * 0.05);
 
         // Complexity fee
-        $complexityMultiplier = match($this->complexity_level) {
-            'basic' => 1.0,
+        $complexityMultiplier = match($this->complexity_level ?? $this->difficulty_level) {
+            'basic', 'beginner' => 1.0,
             'intermediate' => 1.3,
             'advanced' => 1.6,
             'expert' => 2.0,
@@ -348,11 +355,19 @@ class Project extends Model
         $this->complexity_fee = $complexityFee;
         $this->urgency_fee = $urgencyFee;
         $this->total_price = $basePrice + $complexityFee + $urgencyFee;
+        $this->budget = $this->total_price; // Set budget same as total_price
 
         // Platform takes 30%, expert gets 70%
         $this->platform_fee = $this->total_price * 0.30;
+        $this->platform_commission = $this->platform_fee; // Alias for platform_fee
         $this->expert_earnings = $this->total_price * 0.70;
 
         $this->save();
+    }
+
+    // Accessor to ensure budget falls back to total_price if not set
+    public function getBudgetAttribute($value)
+    {
+        return $value ?? $this->attributes['total_price'] ?? 0;
     }
 }

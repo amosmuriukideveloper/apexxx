@@ -40,6 +40,10 @@ class ExpertPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Expert/Pages'), for: 'App\\Filament\\Expert\\Pages')
             ->pages([
                 \App\Filament\Expert\Pages\Dashboard::class,
+                \App\Filament\Expert\Pages\ReceivedProjects::class,
+                \App\Filament\Expert\Pages\InProgressProjects::class,
+                \App\Filament\Expert\Pages\RevisionRequests::class,
+                \App\Filament\Expert\Pages\CompletedProjects::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Expert/Widgets'), for: 'App\\Filament\\Expert\\Widgets')
             ->widgets([
@@ -65,6 +69,8 @@ class ExpertPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->authGuard('web');
+            ->authGuard('web')
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('30s');
     }
 }

@@ -64,28 +64,34 @@ class LearningStatsWidget extends BaseWidget
     
     protected function calculateLearningStreak($user): int
     {
-        // Calculate consecutive days with activity
-        $streak = 0;
-        $currentDate = now()->startOfDay();
-        
-        while (true) {
-            $hasActivity = \App\Models\UserProgress::where('user_id', $user->id)
-                ->whereDate('updated_at', $currentDate)
-                ->exists();
+        // Check if user_progress table exists
+        try {
+            // Calculate consecutive days with activity
+            $streak = 0;
+            $currentDate = now()->startOfDay();
             
-            if ($hasActivity) {
-                $streak++;
-                $currentDate->subDay();
-            } else {
-                break;
+            while (true) {
+                $hasActivity = \App\Models\UserProgress::where('user_id', $user->id)
+                    ->whereDate('updated_at', $currentDate)
+                    ->exists();
+                
+                if ($hasActivity) {
+                    $streak++;
+                    $currentDate->subDay();
+                } else {
+                    break;
+                }
+                
+                // Limit to prevent infinite loop
+                if ($streak > 365) {
+                    break;
+                }
             }
             
-            // Limit to prevent infinite loop
-            if ($streak > 365) {
-                break;
-            }
+            return $streak;
+        } catch (\Exception $e) {
+            // If table doesn't exist or any error, return 0
+            return 0;
         }
-        
-        return $streak;
     }
 }

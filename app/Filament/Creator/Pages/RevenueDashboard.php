@@ -23,7 +23,7 @@ class RevenueDashboard extends Page
         // Total earnings
         $totalEarnings = CourseEnrollment::whereHas('course', function ($query) use ($creatorId) {
             $query->where('creator_id', $creatorId);
-        })->where('status', '!=', 'refunded')->sum('amount_paid');
+        })->where('payment_status', '!=', 'refunded')->sum('amount_paid');
         
         // Platform fee (assuming 30% platform cut)
         $platformFee = $totalEarnings * 0.30;
@@ -33,7 +33,7 @@ class RevenueDashboard extends Page
         $thisMonthEarnings = CourseEnrollment::whereHas('course', function ($query) use ($creatorId) {
             $query->where('creator_id', $creatorId);
         })
-        ->where('status', '!=', 'refunded')
+        ->where('payment_status', '!=', 'refunded')
         ->whereMonth('created_at', now()->month)
         ->whereYear('created_at', now()->year)
         ->sum('amount_paid') * 0.70;
@@ -55,7 +55,7 @@ class RevenueDashboard extends Page
         $courseEarnings = CourseEnrollment::selectRaw('course_id, courses.title, COUNT(*) as enrollments, SUM(amount_paid) as revenue')
             ->join('courses', 'course_enrollments.course_id', '=', 'courses.id')
             ->where('courses.creator_id', $creatorId)
-            ->where('course_enrollments.status', '!=', 'refunded')
+            ->where('course_enrollments.payment_status', '!=', 'refunded')
             ->groupBy('course_id', 'courses.title')
             ->orderBy('revenue', 'desc')
             ->get();
@@ -67,7 +67,7 @@ class RevenueDashboard extends Page
             $earnings = CourseEnrollment::whereHas('course', function ($query) use ($creatorId) {
                 $query->where('creator_id', $creatorId);
             })
-            ->where('status', '!=', 'refunded')
+            ->where('payment_status', '!=', 'refunded')
             ->whereMonth('created_at', $date->month)
             ->whereYear('created_at', $date->year)
             ->sum('amount_paid');

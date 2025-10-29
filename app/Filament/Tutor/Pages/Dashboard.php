@@ -12,7 +12,9 @@ class Dashboard extends BaseDashboard
 
     public function getWidgets(): array
     {
-        return [];
+        return [
+            \App\Filament\Tutor\Widgets\TutorStatsWidget::class,
+        ];
     }
 
     public function getColumns(): int | string | array

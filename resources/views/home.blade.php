@@ -19,10 +19,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="text-center animate-on-scroll">
                 <h1 class="text-5xl md:text-7xl font-extrabold text-white mb-8 leading-tight">
-                    <span class="block">Apex Scholars</span>
-                    <span class="block text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-purple-200 mt-4">
-                        Nexus
-                    </span>
+                    <span class="block">Scholars Quiver</span>
                 </h1>
                 <p class="mt-8 max-w-3xl mx-auto text-xl md:text-2xl text-blue-100 leading-relaxed">
                     Professional academic assistance, expert consultations, and
@@ -191,7 +188,7 @@
             <div class="text-center animate-on-scroll">
                 <h2 class="text-base text-blue-600 font-semibold tracking-wide uppercase mb-4">Why Choose Us</h2>
                 <h3 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6">
-                    The Apex Scholars Advantage
+                    The Scholars Quiver Advantage
                 </h3>
                 <p class="max-w-3xl mx-auto text-xl text-gray-600 leading-relaxed">
                     We stand out from other academic services with our commitment to quality, security, and student success.

@@ -18,6 +18,7 @@ class ContinueLearningWidget extends BaseWidget
         return $table
             ->query(
                 Auth::user()->enrolledCourses()
+                    ->getQuery()
                     ->whereNull('course_enrollments.completed_at')
                     ->latest('course_enrollments.last_accessed_at')
                     ->limit(5)

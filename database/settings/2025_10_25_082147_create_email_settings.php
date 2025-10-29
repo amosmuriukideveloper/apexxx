@@ -13,7 +13,7 @@ return new class extends SettingsMigration
         $this->migrator->add('email.password', '');
         $this->migrator->add('email.encryption', 'tls');
         $this->migrator->add('email.from_address', '');
-        $this->migrator->add('email.from_name', 'Apex Scholars');
+        $this->migrator->add('email.from_name', 'Scholars Quiver');
         $this->migrator->add('email.is_active', true);
     }
 };

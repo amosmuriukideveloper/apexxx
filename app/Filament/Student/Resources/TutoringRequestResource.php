@@ -21,6 +21,12 @@ class TutoringRequestResource extends Resource
     protected static ?string $navigationGroup = 'Tutoring';
     protected static ?int $navigationSort = 1;
 
+    // Allow all students to view their tutoring requests - bypass policy
+    public static function canViewAny(): bool
+    {
+        return true;
+    }
+
     public static function form(Form $form): Form
     {
         return $form

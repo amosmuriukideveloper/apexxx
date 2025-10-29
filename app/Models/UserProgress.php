@@ -13,17 +13,17 @@ class UserProgress extends Model
 
     protected $fillable = [
         'user_id',
-        'enrollment_id',
+        'course_id',
         'lecture_id',
-        'is_completed',
-        'progress_percentage',
-        'completed_at',
+        'activity_type',
+        'progress_value',
+        'notes',
     ];
 
     protected $casts = [
-        'is_completed' => 'boolean',
-        'progress_percentage' => 'integer',
-        'completed_at' => 'datetime',
+        'progress_value' => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function user()
@@ -31,9 +31,9 @@ class UserProgress extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function enrollment()
+    public function course()
     {
-        return $this->belongsTo(CourseEnrollment::class, 'enrollment_id');
+        return $this->belongsTo(Course::class);
     }
 
     public function lecture()

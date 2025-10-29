@@ -40,6 +40,10 @@ class CreatorPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Creator/Pages'), for: 'App\\Filament\\Creator\\Pages')
             ->pages([
                 \App\Filament\Creator\Pages\Dashboard::class,
+                \App\Filament\Creator\Pages\DraftCourses::class,
+                \App\Filament\Creator\Pages\PendingReview::class,
+                \App\Filament\Creator\Pages\PublishedCourses::class,
+                \App\Filament\Creator\Pages\RejectedCourses::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Creator/Widgets'), for: 'App\\Filament\\Creator\\Widgets')
             ->widgets([
@@ -65,6 +69,8 @@ class CreatorPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->authGuard('web');
+            ->authGuard('web')
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('30s');
     }
 }

@@ -8,5 +8,6 @@ use Filament\Resources\Pages\ViewRecord;
 class ViewMyProject extends ViewRecord
 {
     protected static string $resource = MyProjectResource::class;
-    protected static string $view = 'filament.expert.pages.view-project';
+    
+    // Remove custom view to use default Filament view with relation manager tabs
 }

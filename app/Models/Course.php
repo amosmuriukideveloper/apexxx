@@ -28,19 +28,31 @@ class Course extends Model
         'slug',
         'short_description',
         'description',
-        'category_id',
+        'category', // Using string category, not category_id
+        'subcategory',
+        'tags',
+        'level',
         'price',
+        'discount_price',
+        'is_free',
         'sale_price',
         'thumbnail',
+        'thumbnail_path',
+        'promo_video_path',
         'intro_video',
         'difficulty',
         'status',
+        'approval_status',
         'rejection_reason',
+        'admin_notes',
         'published_at',
+        'approved_at',
+        'approved_by',
         'total_duration_minutes',
         'total_lectures',
         'total_enrollments',
         'average_rating',
+        'total_reviews',
         'is_featured',
         'language',
         'objectives',
@@ -101,10 +113,11 @@ class Course extends Model
         return $this->belongsTo(User::class, 'creator_id');
     }
 
-    public function category()
-    {
-        return $this->belongsTo(CourseCategory::class, 'category_id');
-    }
+    // Commented out: Using string 'category' column instead of relationship
+    // public function category()
+    // {
+    //     return $this->belongsTo(CourseCategory::class, 'category_id');
+    // }
 
     public function sections()
     {

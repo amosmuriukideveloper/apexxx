@@ -7,6 +7,7 @@ use App\Settings\GeneralSettings;
 use App\Settings\PaymentSettings;
 use App\Settings\EmailSettings;
 use App\Settings\NotificationSettings;
+use App\Settings\ProjectPricingSettings;
 
 class SettingsSeeder extends Seeder
 {
@@ -17,6 +18,7 @@ class SettingsSeeder extends Seeder
         $this->initializePaymentSettings();
         $this->initializeEmailSettings();
         $this->initializeNotificationSettings();
+        $this->initializeProjectPricingSettings();
     }
 
     private function initializeGeneralSettings()
@@ -73,5 +75,19 @@ class SettingsSeeder extends Seeder
         }
         
         $this->command->info('✓ Notification Settings seeded');
+    }
+
+    private function initializeProjectPricingSettings()
+    {
+        $defaults = ProjectPricingSettings::defaults();
+        
+        foreach ($defaults as $key => $value) {
+            \DB::table('settings')->updateOrInsert(
+                ['group' => 'project_pricing', 'name' => $key],
+                ['payload' => json_encode($value), 'locked' => false]
+            );
+        }
+        
+        $this->command->info('✓ Project Pricing Settings seeded');
     }
 }

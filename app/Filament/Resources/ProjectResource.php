@@ -296,7 +296,9 @@ class ProjectResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            \App\Filament\Resources\ProjectResource\RelationManagers\SubmissionsRelationManager::class,
+            \App\Filament\Resources\ProjectResource\RelationManagers\RevisionsRelationManager::class,
+            \App\Filament\Resources\ProjectResource\RelationManagers\MessagesRelationManager::class,
         ];
     }
 

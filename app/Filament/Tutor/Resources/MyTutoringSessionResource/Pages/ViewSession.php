@@ -53,10 +53,14 @@ class ViewSession extends ViewRecord
                 
                 Infolists\Components\Section::make('Schedule')
                     ->schema([
-                        Infolists\Components\TextEntry::make('confirmed_date')
-                            ->label('Scheduled Date & Time')
-                            ->dateTime('F d, Y H:i A')
-                            ->badge()
+                        Infolists\Components\TextEntry::make('preferred_date')
+                            ->label('Scheduled Date')
+                            ->date('F d, Y')
+                            ->badge(),
+                        
+                        Infolists\Components\TextEntry::make('preferred_time')
+                            ->label('Time')
+                            ->time('H:i A')
                             ->color('success')
                             ->placeholder(fn ($record) => 'Proposed: ' . $record->preferred_date->format('F d, Y H:i A')),
                         Infolists\Components\TextEntry::make('google_meet_link')

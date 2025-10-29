@@ -51,7 +51,7 @@ class RecentCoursesWidget extends BaseWidget
                     ->money('USD')
                     ->getStateUsing(function ($record) {
                         return $record->enrollments()
-                            ->where('status', '!=', 'refunded')
+                            ->where('payment_status', '!=', 'refunded')
                             ->sum('amount_paid');
                     }),
                 

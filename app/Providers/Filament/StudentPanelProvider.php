@@ -38,6 +38,11 @@ class StudentPanelProvider extends PanelProvider
                 'warning' => Color::Amber,
                 'danger' => Color::Red,
             ])
+            ->authGuard('web')
+            ->loginRouteSlug('login')
+            ->registrationRouteSlug('register')
+            ->passwordResetRoutePrefix('password-reset')
+            ->emailVerificationRoutePrefix('email-verification')
             ->discoverResources(in: app_path('Filament/Student/Resources'), for: 'App\\Filament\\Student\\Resources')
             ->discoverPages(in: app_path('Filament/Student/Pages'), for: 'App\\Filament\\Student\\Pages')
             ->pages([
@@ -66,8 +71,7 @@ class StudentPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ])
-            ->authGuard('web');
+            ]);
     }
 
     public function boot(): void

@@ -6,7 +6,7 @@ return new class extends SettingsMigration
 {
     public function up(): void
     {
-        $this->migrator->add('general.site_name', 'Apex Scholars');
+        $this->migrator->add('general.site_name', 'Scholars Quiver');
         $this->migrator->add('general.site_tagline', 'Learn, Create, Succeed');
         $this->migrator->add('general.site_description', null);
         $this->migrator->add('general.site_logo', null);

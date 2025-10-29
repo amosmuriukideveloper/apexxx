@@ -21,6 +21,9 @@ class DatabaseSeeder extends Seeder
         // Seed subjects before other content
         $this->call(SubjectSeeder::class);
 
+        // Seed application settings
+        $this->call(SettingsSeeder::class);
+
         // Create a super admin user
         $superAdmin = User::factory()->create([
             'name' => 'Super Admin',

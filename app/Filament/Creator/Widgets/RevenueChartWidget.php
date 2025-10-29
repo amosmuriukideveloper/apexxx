@@ -59,7 +59,7 @@ class RevenueChartWidget extends ChartWidget
             })
             ->whereMonth('created_at', $date->month)
             ->whereYear('created_at', $date->year)
-            ->where('status', '!=', 'refunded')
+            ->where('payment_status', '!=', 'refunded')
             ->sum('amount_paid');
             
             $monthlyEnrollments = CourseEnrollment::whereHas('course', function ($query) use ($creatorId) {

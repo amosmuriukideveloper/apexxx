@@ -8,7 +8,7 @@
                 <i data-lucide="log-in" class="h-6 w-6 text-white"></i>
             </div>
             <h2 class="text-3xl font-bold text-gray-900 mb-2">Welcome back</h2>
-            <p class="text-gray-600">Sign in to your Apex Scholars account</p>
+            <p class="text-gray-600">Sign in to your Scholars Quiver account</p>
         </div>
 
         <div class="bg-white rounded-xl shadow-xl p-8">

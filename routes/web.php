@@ -204,21 +204,35 @@ Route::get('/courses', function () {
 
 // Auth Routes - Redirect to appropriate Filament panels
 Route::get('/login', function () {
-    // Show a simple login selector page or redirect to student login
-    return view('auth.login-selector');
+    // If already authenticated, redirect to dashboard
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
+    return view('auth.enhanced-login');
 })->name('login');
 
 Route::get('/register', function () {
-    // Show a simple registration selector page  
-    return view('auth.register-selector');
+    // If already authenticated, redirect to dashboard
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
+    return view('auth.enhanced-register');
 })->name('register');
 
 Route::post('/logout', function () {
     auth()->logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
-    return redirect('/');
-})->name('logout');
+    return redirect()->route('home');
+})->middleware('web')->name('logout');
+
+// Additional logout GET route (for compatibility)
+Route::get('/logout', function () {
+    auth()->logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect()->route('home');
+})->middleware('web');
 
 // Dashboard route - Smart redirect based on user role
 Route::get('/dashboard', function () {

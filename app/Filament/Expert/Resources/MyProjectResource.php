@@ -17,20 +17,31 @@ class MyProjectResource extends Resource
     protected static ?string $model = Project::class;
     protected static ?string $navigationIcon = 'heroicon-o-briefcase';
     protected static ?string $navigationLabel = 'My Projects';
-    protected static ?string $navigationGroup = 'Work';
+    protected static ?string $navigationGroup = 'My Projects';
     protected static ?int $navigationSort = 1;
 
     public static function getNavigationBadge(): ?string
     {
-        return (string) Project::where('expert_id', Auth::id())
+        if (!Auth::check()) {
+            return null;
+        }
+        
+        $count = Project::where('expert_id', Auth::id())
             ->whereIn('status', ['assigned', 'revision_required'])
             ->count();
+            
+        return $count > 0 ? (string) $count : null;
     }
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->where('expert_id', Auth::id());
+        $query = parent::getEloquentQuery();
+        
+        if (Auth::check()) {
+            $query->where('expert_id', Auth::id());
+        }
+        
+        return $query;
     }
 
     public static function table(Table $table): Table
@@ -174,6 +185,15 @@ class MyProjectResource extends Resource
             ->defaultSort('deadline', 'asc');
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            \App\Filament\Expert\Resources\MyProjectResource\RelationManagers\SubmissionsRelationManager::class,
+            \App\Filament\Expert\Resources\MyProjectResource\RelationManagers\RevisionsRelationManager::class,
+            \App\Filament\Expert\Resources\MyProjectResource\RelationManagers\MessagesRelationManager::class,
+        ];
+    }
+    
     public static function getPages(): array
     {
         return [

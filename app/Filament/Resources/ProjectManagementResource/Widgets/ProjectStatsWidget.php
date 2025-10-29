@@ -33,7 +33,7 @@ class ProjectStatsWidget extends BaseWidget
                 ->description('Need expert assignment')
                 ->descriptionIcon('heroicon-o-user-plus')
                 ->color('warning')
-                ->url(route('filament.admin.resources.project-management.index', ['tableFilters[status][value]' => 'awaiting_assignment'])),
+                ->url(route('filament.platform.resources.project-managements.index', ['tableFilters[status][value]' => 'awaiting_assignment'])),
             
             Stat::make('In Progress', $inProgress)
                 ->description("{$assigned} assigned, not started")
@@ -44,7 +44,7 @@ class ProjectStatsWidget extends BaseWidget
                 ->description('Awaiting quality check')
                 ->descriptionIcon('heroicon-o-eye')
                 ->color('info')
-                ->url(route('filament.admin.resources.project-management.index', ['tableFilters[status][value]' => 'under_review'])),
+                ->url(route('filament.platform.resources.project-managements.index', ['tableFilters[status][value]' => 'under_review'])),
             
             Stat::make('Completed', $completed)
                 ->description($overdue > 0 ? "{$overdue} overdue projects" : 'All on track')

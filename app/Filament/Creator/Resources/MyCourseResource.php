@@ -234,7 +234,7 @@ class MyCourseResource extends Resource
                     ->money('USD')
                     ->getStateUsing(function ($record) {
                         return $record->enrollments()
-                            ->where('status', '!=', 'refunded')
+                            ->where('payment_status', '!=', 'refunded')
                             ->sum('amount_paid');
                     }),
                 

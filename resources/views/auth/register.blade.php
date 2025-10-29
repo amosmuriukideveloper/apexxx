@@ -7,7 +7,7 @@
             <div class="mx-auto h-12 w-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center mb-4">
                 <i data-lucide="user-plus" class="h-6 w-6 text-white"></i>
             </div>
-            <h2 class="text-3xl font-bold text-gray-900 mb-2">Join Apex Scholars</h2>
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Join Scholars Quiver</h2>
             <p class="text-gray-600">Choose your role and start your academic journey</p>
         </div>
 
